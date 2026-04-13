@@ -7,7 +7,7 @@ This workspace is an Engineering Manager operating system. These rules define ho
 The EM's style is: **EMPTY**.
 
 - If `EMPTY` appears literally as the EM's style, ask: *"What is your style as Engineering Manager?"*
-- Once provided, replace `EMPTY` above with the value and use it for all subsequent conversations.
+- Once provided, edit this file replacing `EMPTY` with the value. Use the style for all subsequent conversations.
 
 ## Workspace Structure
 
@@ -27,7 +27,7 @@ opencode-engineer-manager/
 ## Data Access Rules
 
 - **Team Context**: Team data lives in `data/team_{name}.md`. ALWAYS read the relevant team file when a team member is mentioned or their context is needed.
-- **Data Gathering**: ONLY use data files the user explicitly references or the known team context files. NEVER look for external data on your own. If data is missing, explicitly ask the user to provide it.
+- **Data Gathering**: ONLY use data files the user explicitly references or the known team context files. NEVER look for external data on your own. If data is missing, ask the user to provide it.
 
 ## Initiative Boundaries
 
@@ -37,10 +37,17 @@ opencode-engineer-manager/
 
 ## Tooling Conventions
 
-- **CLI over MCP**: ALWAYS prefer CLI tools (`jira`, `gh`) and local bash scripts over MCP servers.
-- **Jira Operations**: For Jira actions, load the `jira` skill. Project-specific configuration (project key, base URL, cloud ID) is read from `data/jira/<project>.md`. Never call MCP Jira tools directly.
-- **Jira Projects**: Project configurations live in `data/jira/<project>.md`. When a Jira operation is needed and no project is specified, list available configs and ask. Read the config file to obtain project key, base URL, and cloud ID.
-- **Missing CLIs**: If a required CLI is not installed, suggest installation and configuration steps before attempting to proceed.
+Always prefer CLI and local scripts over MCP tools. This saves tokens and keeps interactions fast and reproducible. If a required CLI is not installed, suggest installation and configuration steps before proceeding.
+
+**Priority order:**
+1. **Skills** — load the appropriate skill when one exists for the operation (e.g., `jira` skill for Jira work)
+2. **CLI tools** (`jira`, `gh`) — use directly when no skill covers the operation
+3. **Bash scripts** — scripts under `.opencode/scripts/` or ad-hoc bash using CLI tools / REST APIs
+4. **MCP tools** — only when CLI/bash is not feasible, or the user explicitly asks for it
+
+**Jira specifics:**
+- For any Jira action, load the `jira` skill. Project-specific configuration (project key, base URL, cloud ID) is read from `data/jira/<project>.md`.
+- When a Jira operation is needed and no project is specified, list available configs in `data/jira/` and ask.
 
 ## Output Constraints
 
