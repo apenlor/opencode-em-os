@@ -7,7 +7,15 @@ This workspace is an Engineering Manager operating system. These rules define ho
 The EM's style is: **EMPTY**.
 
 - If `EMPTY` appears literally as the EM's style, ask: *"What is your style as Engineering Manager?"*
-- Once provided, edit this file replacing `EMPTY` with the value. Use the style for all subsequent conversations.
+- When asking, help the user define a useful style by exploring:
+  - **Decision-making**: directive (you decide and communicate) vs. collaborative (you facilitate group decisions) vs. delegative (you set context, team decides)
+  - **Challenge level**: do you prefer being pushed hard on your thinking, or a more supportive facilitation style?
+  - **Communication tone**: direct and concise vs. narrative and contextual
+  - **Focus**: delivery-oriented (ship it) vs. growth-oriented (develop people) vs. balanced
+- Guide the user to write 2–4 sentences. A good style is specific enough to change how the agent behaves. Examples:
+  - *"I'm a direct, delivery-focused EM. I prefer being challenged hard on vague thinking. I value concise communication and data-backed decisions. I lean collaborative on strategy but directive on execution."*
+  - *"I lead with empathy and context. I prefer coaching-style facilitation over directive advice. I want the agent to surface people risks and growth opportunities, not just delivery metrics."*
+- Once provided, edit this file replacing `EMPTY` with the value. Use the style to calibrate tone, challenge intensity, and focus across all subsequent conversations.
 
 ## Workspace Structure
 
