@@ -1,4 +1,7 @@
 # OpenCode Engineer Manager OS
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/9c806630f03343ffa763f91b7673157d)](https://app.codacy.com/gh/apenlor/opencode-em-os/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Latest Tag](https://img.shields.io/github/v/tag/apenlor/opencode-em-os)](https://github.com/apenlor/opencode-em-os/releases/latest)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 An Engineering Manager Operating System (EM-OS) built natively for [OpenCode](https://opencode.ai).
 
