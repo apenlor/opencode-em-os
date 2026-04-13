@@ -58,7 +58,7 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
    opencode
    ```
 
-6. On the first run, the EM agent will ask for your management style. Answer once. It saves automatically to `AGENTS.md`.
+6. On the first run, the EM agent will ask for your management style. Write 2–4 sentences covering your decision-making approach, preferred challenge level, communication tone, and focus areas. The more specific you are, the better the agent adapts. See `AGENTS.md` for examples and prompts.
 
 ## Workspace Structure
 
@@ -109,16 +109,11 @@ Here is how you use this OS to drive execution and manage your team.
 
 ### 1. Initiative Planning
 Drive a new project from idea to execution.
-1. **Establish the Boundary**: Create a new initiative folder.
-   ```bash
-   mkdir -p initiatives/backend-rewrite/data initiatives/backend-rewrite/output
-   ```
-2. **Provide Raw Context**: Drop your raw thoughts or rough PRDs into `initiatives/backend-rewrite/data/raw-notes.md`.
-3. **Brainstorm & Plan**: Engage the `plan-initiative` skill to help structure your thoughts:
-   > "Read initiatives/backend-rewrite/data/raw-notes.md and help me use the `plan-initiative` skill to structure this work."
-4. **Draft Execution Items**: Once the plan is solid, ask the agent to generate strategies, visions, epics or stories:
-   > "Write the epics for the backend rewrite based on our plan and save them to initiatives/backend-rewrite/output/epics.md"
-5. **Push to Jira**: Leverage the built-in CLI integration:
+1. **Brainstorm & Plan**: Engage the `plan-initiative` skill to structure your work. The skill will facilitate your thinking, propose a slug for the initiative, and automatically create the folder structure under `initiatives/[slug]/` when the plan is confirmed:
+   > "Help me plan the backend rewrite initiative."
+2. **Provide Raw Context** (optional): Drop PRDs or raw notes into `initiatives/[slug]/data/` for the agent to reference.
+3. **Draft Execution Items**: Once the plan is solid, generate strategies, visions, epics, or stories. Authoring skills save output to `initiatives/[slug]/output/` automatically.
+4. **Push to Jira**: Leverage the built-in CLI integration:
    > "Create these epics in the 'PROJ' Jira project."
 
 ### 2. The 1:1 Lifecycle
@@ -138,21 +133,30 @@ Translate high-level product requirements into functional slices.
 
 The agent automatically loads these skills based on your request.
 
-### Strategy & Product Architecture
+### Strategy & Planning
 | Skill | Trigger Examples |
 |-------|-----------------|
 | `plan-initiative` | "plan an initiative", "help me structure this" |
-| `us-mapping` | "user story map", "story mapping" |
 | `write-strategy` | "write a strategy" |
 | `write-vision` | "write a vision" |
 
-### Execution & Engineering Lifecycle
+### Product & Delivery Authoring
 | Skill | Trigger Examples |
 |-------|-----------------|
-| `jira` | "create an epic", "show me bugs", "issues completed" |
+| `us-mapping` | "user story map", "story mapping" |
 | `write-epic-build` | "write an epic", "implementation plan" |
 | `write-epic-technical-discovery` | "technical discovery", "discovery epic" |
 | `write-us` | "write a user story", "write a US" |
+
+> These skills produce local artifacts in `initiatives/[name]/output/`. They offer to push content to Jira as a follow-up step.
+
+### Integrations
+| Skill / Command | Trigger Examples |
+|-------|-----------------|
+| `jira` | "create an epic in Jira", "show me bugs", "issues completed" |
+| `/ic-activity` (Command) | "/ic-activity John last month" |
+
+> These tools interact with external systems (Jira, GitHub). They create or query data outside this workspace.
 
 ### People & Leadership
 | Skill / Command | Trigger Examples |
@@ -160,7 +164,6 @@ The agent automatically loads these skills based on your request.
 | `prepare-one-on-one` | "prepare my 1:1 with", "1:1 prep" |
 | `log-one-on-one` | "log my 1:1 with", "record 1:1", "save 1:1 notes" |
 | `mentor-me` | "mentor me with", "help me think", "I need advice" |
-| `/ic-activity` (Command) | "/ic-activity John last month" |
 
 ## Isolation & Security
 
