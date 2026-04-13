@@ -15,15 +15,16 @@ description: >
 **Before any Jira operation**, identify the target project:
 
 1. If the user specified a project name or key, use it.
-2. If not, list the files in `data/jira/` — each file represents one configured project.
-   Ask: *"Which Jira project? Available: [list filenames without extension]"*
-3. Read `data/jira/<project>.md` to get the project's **Project Key**, **Base URL**, **Cloud ID**,
+2. If not, read `data/jira.md` and list the projects defined under `## Projects`.
+   Ask: *"Which Jira project? Available: [list project keys and names]"*
+3. Read the relevant `### <PROJECT>` section in `data/jira.md` to get the **Project Key**,
    custom fields, and defaults.
-4. Use those values for all CLI commands in this conversation. Do not ask again.
+4. Read the `## Instance` section in `data/jira.md` to get the **Base URL** and **Cloud ID**.
+5. Use those values for all CLI commands in this conversation. Do not ask again.
 
-If `data/jira/` is empty or missing, ask the user to create a config file:
-*"No Jira projects configured yet. Copy `data/jira/example.md` to `data/jira/<yourproject>.md`
-and fill in the project key, base URL, and cloud ID."*
+If `data/jira.md` is missing or has no projects configured, ask the user to add a project:
+*"No Jira projects configured yet. Edit `data/jira.md` and add a project under `## Projects`
+following the existing template."*
 
 ---
 
@@ -46,7 +47,7 @@ jira issue create -p {project_key} -t <IssueType> -s "<summary>" [flags]
 jira issue view <ISSUE-KEY>
 ```
 
-Where `{project_key}` is the value read from the project's config file in `data/jira/`.
+Where `{project_key}` is the value read from the project's section in `data/jira.md`.
 
 ---
 
@@ -176,4 +177,4 @@ Share:
 - If a field value is unknown, ask — don't guess
 - If the user says "N days", substitute the number directly into the JQL (e.g. `-7d`)
 - For date fields use ISO format: `YYYY-MM-DD`
-- `{project_key}`, `{cloud_id}`, `{base_url}` refer to values read from the project config file
+- `{project_key}`, `{cloud_id}`, `{base_url}` refer to values read from `data/jira.md`

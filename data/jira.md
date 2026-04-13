@@ -1,25 +1,36 @@
-# Jira Project: EXAMPLE
+# Jira Configuration
+
+## Instance
 
 | Field | Value |
 |---|---|
-| Project Key | EXAMPLE |
-| Cloud ID | your-cloud-id-here |
 | Base URL | yourcompany.atlassian.net |
+| Cloud ID | your-cloud-id-here |
 
-## Defaults
+---
+
+## Projects
+
+### PROJ1 — Example Project One
+
+| Field | Value |
+|---|---|
+| Project Key | PROJ1 |
+
+#### Defaults
 
 | Field | Default |
 |---|---|
+| Priority | Medium |
 | Assignee | None (unless user specifies) |
 | Reporter | Current user |
-| Priority | Medium (unless user specifies) |
 | Components | None |
 | Labels | None |
 
-## Supported Issue Types
+#### Supported Issue Types
 
 Epic, Story, Bug, Task, Sub-task
 
-## Notes
+#### Notes
 
 Add any project-specific notes here (e.g., custom statuses, required fields, naming conventions).

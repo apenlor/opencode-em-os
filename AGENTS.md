@@ -46,8 +46,10 @@ Always prefer CLI and local scripts over MCP tools. This saves tokens and keeps 
 4. **MCP tools** — only when CLI/bash is not feasible, or the user explicitly asks for it
 
 **Jira specifics:**
-- For any Jira action, load the `jira` skill. Project-specific configuration (project key, base URL, cloud ID) is read from `data/jira/<project>.md`.
-- When a Jira operation is needed and no project is specified, list available configs in `data/jira/` and ask.
+- For any Jira action, load the `jira` skill.
+- Instance configuration (Base URL, Cloud ID) and project-specific settings (project key, defaults, issue types) are read from `data/jira.md`.
+- Authentication tokens and credentials are NEVER stored in `data/`. They live in `.env.local` (see `.env.example`).
+- When a Jira operation is needed and no project is specified, list the projects in `data/jira.md` and ask.
 
 ## Output Constraints
 

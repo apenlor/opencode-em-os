@@ -29,31 +29,36 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
    git clone <repo-url> && cd opencode-engineer-manager
    ```
 
-2. Start OpenCode:
+2. Set up your environment:
    ```bash
-   opencode
+   cp .env.example .env.local
+   # Edit .env.local with your GitHub token and Jira credentials
    ```
 
-3. On first run, the EM agent will ask for your management style. Answer once — it saves automatically to `AGENTS.md`.
+3. Configure your Jira instance and projects in `data/jira.md`:
+   ```
+   ## Instance
+   Base URL: yourcompany.atlassian.net
+   Cloud ID: your-cloud-id
+
+   ## Projects
+   ### PROJ — My Project
+   Project Key: PROJ
+   ...
+   ```
 
 4. Add your team data:
    ```bash
    cp data/team_example.md data/team_myteam.md
-   # Edit with your team's details (Jira IDs, GitHub handles, etc.)
+   # Edit with your team's details (Jira emails, GitHub handles, etc.)
    ```
 
-### Project-Specific Jira
+5. Start OpenCode:
+   ```bash
+   opencode
+   ```
 
-For each Jira project you work with, create a config file:
-
-```bash
-cp data/jira/example.md data/jira/myproject.md
-# Edit data/jira/myproject.md:
-#   - Set Project Key, Cloud ID, Base URL
-#   - Customize defaults and custom fields as needed
-```
-
-The `jira` skill automatically discovers available projects from `data/jira/`.
+6. On first run, the EM agent will ask for your management style. Answer once — it saves automatically to `AGENTS.md`.
 
 ## Workspace Structure & Data Management
 
@@ -61,9 +66,10 @@ This workspace enforces strict organization to prevent "context bleed" between d
 
 ```text
 opencode-engineer-manager/
+├── .env.example                # Template — copy to .env.local (never commit .env.local)
 ├── data/                       # Shared context (persists across all work)
-│   ├── team_{name}.md          # Team rosters, roles, and context
-│   └── jira/                   # Project-specific Jira configurations
+│   ├── jira.md                 # Jira instance config + all project definitions
+│   └── team_{name}.md          # Team rosters, roles, GitHub handles, Jira emails
 │
 ├── [initiative-name]/          # Isolated workspace for an active initiative
 │   ├── data/                   # Context just for this initiative (PRDs, notes)
@@ -74,12 +80,24 @@ opencode-engineer-manager/
 └── .opencode/                  # The agent's brain (skills, commands, personas)
 ```
 
+### What Lives Where
+
+| What | Where | Why |
+|---|---|---|
+| GitHub token, Jira API token, Jira email | `.env.local` | Secrets. never committed |
+| Jira instance URL, Cloud ID | `data/jira.md` → `## Instance` | Non-secret, instance-level, read by the agent |
+| Jira project key, defaults, issue types | `data/jira.md` → `## Projects` | Project-specific routing and rules |
+| Team member names, GitHub handles, Jira emails | `data/team_*.md` | Team context for skills and commands |
+
 ### Data Access Rules
 
 The `@manager` agent operates on a **strict explicit context** rule. To keep your data private and context clean, it will not crawl your hard drive or the web. It will only use:
-1. Team and Jira configuration files in the root `data/` folder.
-2. Files you explicitly point it to in your prompt (e.g., `"Review backend-rewrite/data/specs.md"`).
-3. Context provided via loaded skills.
+1. `data/jira.md` for Jira instance and project configuration.
+2. Team context files in the root `data/` folder (`data/team_*.md`).
+3. Files you explicitly point it to in your prompt (e.g., `"Review backend-rewrite/data/specs.md"`).
+4. Context provided via loaded skills.
+
+Authentication tokens in `.env.local` are consumed only by scripts. The agent never reads them directly.
 
 ## Typical Workflow
 
