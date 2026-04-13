@@ -1,4 +1,4 @@
-# opencode-engineer-manager — Workspace Rules
+# opencode-em-os — Workspace Rules
 
 This workspace is an Engineering Manager operating system. These rules define how data is accessed, how work is organized, and the EM's personal style.
 
@@ -20,7 +20,7 @@ The EM's style is: **EMPTY**.
 ## Workspace Structure
 
 ```
-opencode-engineer-manager/
+opencode-em-os/
 ├── data/                       # Shared data across initiatives
 │   ├── jira.md                 # Jira instance config + all project definitions
 │   ├── team_{name}.md          # Team context files

@@ -29,7 +29,7 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 
 1. **Clone this repository**:
    ```bash
-   git clone <repo-url> && cd opencode-engineer-manager
+   git clone <repo-url> && cd opencode-em-os
    ```
 
 2. **Set up your environment**:
@@ -68,7 +68,7 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 This workspace enforces strict organization to prevent context bleed between different initiatives.
 
 ```text
-opencode-engineer-manager/
+opencode-em-os/
 ├── .env.example                # Template: copy to .env.local (never commit .env.local)
 ├── data/                       # Shared context (persists across all work)
 │   ├── jira.md                 # Jira instance config + all project definitions
