@@ -1,6 +1,21 @@
 # Changelog
 
-## v2.0.0 (2026-04-13)
+## v0.1.0 (2026-04-13)
+
+### Added
+- Management style definition guidance with examples and dimension prompts in `AGENTS.md`
+- Auto-creation of initiative folder structure (`data/`, `tmp/`, `scripts/`, `output/`) in `plan-initiative` skill
+- Initiative identity step in `plan-initiative`: slug proposal and folder existence check before drafting
+- Output path conventions for all authoring skills — save to `initiatives/[name]/output/` automatically
+- Save-then-Jira workflow for epic and user story skills (save locally first, then offer Jira push)
+- Dual save path for `write-strategy` and `write-vision`: initiative-level or team-level (`data/`)
+
+### Changed
+- README: reorganized skill categories into Strategy & Planning, Product & Delivery Authoring, Integrations, and People & Leadership
+- README: expanded Quick Start step 6 with management style guidance, pointing to `AGENTS.md` for examples
+- README: updated Initiative Planning workflow — `plan-initiative` now creates the folder; manual `mkdir` no longer required
+
+## v0.0.0 (2026-04-13)
 
 ### Breaking Changes
 - Migrated from Claude Code ([claude-em](https://github.com/jcesarperez/claude-em)) to OpenCode Native (opencode-engineer-manager)
