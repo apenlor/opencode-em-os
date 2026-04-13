@@ -34,12 +34,12 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
    opencode
    ```
 
-3. On first run, the EM agent will ask for your management style. Answer once — it saves automatically.
+3. On first run, the EM agent will ask for your management style. Answer once — it saves automatically to `AGENTS.md`.
 
 4. Add your team data:
    ```bash
    cp data/team_example.md data/team_myteam.md
-   # Edit with your team's details
+   # Edit with your team's details (Jira IDs, GitHub handles, etc.)
    ```
 
 ### Project-Specific Jira
@@ -55,7 +55,49 @@ cp data/jira/example.md data/jira/myproject.md
 
 The `jira` skill automatically discovers available projects from `data/jira/`.
 
-## Usage
+## Workspace Structure & Data Management
+
+This workspace enforces strict organization to prevent "context bleed" between different initiatives. 
+
+```text
+opencode-engineer-manager/
+├── data/                       # Shared context (persists across all work)
+│   ├── team_{name}.md          # Team rosters, roles, and context
+│   └── jira/                   # Project-specific Jira configurations
+│
+├── [initiative-name]/          # Isolated workspace for an active initiative
+│   ├── data/                   # Context just for this initiative (PRDs, notes)
+│   ├── tmp/                    # Scratchpad files
+│   ├── scripts/                # Ad-hoc scripts for this specific project
+│   └── output/                 # Generated epics, strategies, and reports
+│
+└── .opencode/                  # The agent's brain (skills, commands, personas)
+```
+
+### Data Access Rules
+
+The `@manager` agent operates on a **strict explicit context** rule. To keep your data private and context clean, it will not crawl your hard drive or the web. It will only use:
+1. Team and Jira configuration files in the root `data/` folder.
+2. Files you explicitly point it to in your prompt (e.g., `"Review backend-rewrite/data/specs.md"`).
+3. Context provided via loaded skills.
+
+## Typical Workflow
+
+Here is how you use this OS to drive a new project from idea to execution. The agent acts as your thinking partner and execution engine.
+
+1. **Establish the Boundary:** Create a new folder for your project. You can do this manually or ask the agent to do it.
+   ```bash
+   mkdir -p backend-rewrite/data backend-rewrite/output
+   ```
+2. **Provide Raw Context:** Drop your raw thoughts, meeting transcripts, or rough PRDs into `backend-rewrite/data/raw-notes.md`.
+3. **Brainstorm & Plan:** Engage the `plan-initiative` skill to help structure your thoughts:
+   > *"Read backend-rewrite/data/raw-notes.md and help me use the `plan-initiative` skill to structure this work."*
+4. **Draft Execution Items:** Once the plan is solid, ask the agent to generate the epics or stories and save them to the output folder:
+   > *"Write the epics for the backend rewrite based on our plan and save them to backend-rewrite/output/epics.md"*
+5. **Push to Jira:** Finally, leverage the built-in CLI integration:
+   > *"Create these epics in the 'PROJ' Jira project."*
+
+## Available Tools
 
 ### Skills (loaded automatically when relevant)
 
@@ -78,27 +120,12 @@ The `jira` skill automatically discovers available projects from `data/jira/`.
 |---------|-------|
 | `/ic-activity` | `/ic-activity John last month` |
 
-## Architecture
-
-```
-.opencode/
-├── agents/manager.md     # Primary EM agent (persona + permissions)
-├── skills/               # 10 conversational workflow skills
-├── commands/             # /ic-activity command
-└── scripts/              # Bash scripts for data gathering
-```
-
-- **opencode.json** — Workspace config with isolation and CLI-first permissions
-- **AGENTS.md** — Structural rulebook (data access, workspace conventions, EM style)
-- **data/** — Team context files
-
-## Isolation
+## Isolation & Security
 
 This workspace is designed to run independently of any global OpenCode configuration:
-- `instructions: []` prevents global rules from bleeding in
-- `mcp: {}` disables globally-configured MCP servers
-- Permissions are explicitly defined at workspace level
-- The `manager` agent has its own permission overrides
+- `instructions: []` in `opencode.json` prevents global rules from bleeding in.
+- `mcp: {}` disables globally-configured MCP servers.
+- Permissions are explicitly defined at the workspace level, favoring CLI tools over MCP for transparency and speed.
 
 ## License
 
