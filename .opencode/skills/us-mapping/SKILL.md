@@ -135,9 +135,14 @@ Write the map as a `.md` file using this exact structure:
 - [Open questions from the PRD worth resolving before planning]
 ```
 
-**File naming:** `US_Mapping_[FeatureName]_v1.md`
+**File path:** `initiatives/[initiative-name]/output/US_Mapping_[FeatureName]_v1.md`
 
-Save to the project directory and present to the user.
+If the initiative context is not clear from the conversation, ask:
+*"Which initiative does this story map belong to?"* and list existing folders under `initiatives/`.
+
+If the initiative folder does not exist, create the full structure (`data/`, `tmp/`, `scripts/`, `output/`) before saving.
+
+Present the map to the user.
 
 ---
 

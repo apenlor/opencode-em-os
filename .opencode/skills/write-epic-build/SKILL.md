@@ -179,6 +179,18 @@ Do not finalize without explicit confirmation.
 
 ---
 
+## Step 4: Save the epic
+
+After the user confirms and **before** offering to create in Jira:
+
+1. Save the epic to `initiatives/[initiative-name]/output/epic-build-[slug].md`.
+2. If the initiative context is not clear, ask: *"Which initiative does this epic belong to?"* and list existing folders under `initiatives/`.
+3. If the initiative folder does not exist, create the full structure (`data/`, `tmp/`, `scripts/`, `output/`).
+4. Confirm the file path after saving.
+5. Then ask: *"Want me to create this epic in Jira?"* — if yes, invoke the `jira` skill.
+
+---
+
 ## Quality checklist (run before showing the draft)
 
 - [ ] Clear goal linked to user or business value

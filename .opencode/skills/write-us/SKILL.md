@@ -190,6 +190,18 @@ Show the full draft (title + formatted description) and ask:
 
 ---
 
+## Step 5: Save the user story
+
+After the user confirms and **before** offering to create in Jira:
+
+1. Save the story to `initiatives/[initiative-name]/output/us-[slug].md`.
+2. If the initiative context is not clear, ask: *"Which initiative does this story belong to?"* and list existing folders under `initiatives/`.
+3. If the initiative folder does not exist, create the full structure (`data/`, `tmp/`, `scripts/`, `output/`).
+4. Confirm the file path after saving.
+5. Then ask: *"Want me to create this story in Jira?"* — if yes, invoke the `jira` skill.
+
+---
+
 ## Quality checklist (run before showing the draft to the user)
 
 - [ ] 3–7 acceptance criteria, no more

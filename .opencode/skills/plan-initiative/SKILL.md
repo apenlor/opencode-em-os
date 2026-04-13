@@ -57,6 +57,17 @@ Start by asking the EM to describe the initiative in their own words. Then probe
 - What do we not yet know that we need to know?
 - Where is the biggest uncertainty — technical, product, or org?
 
+### Initiative Identity _(establish before drafting)_
+
+As the thinking solidifies and a title direction emerges, settle on the initiative identity before proceeding to the draft:
+
+1. Propose an initiative slug derived from the title direction — lowercase, hyphens, no special characters, max ~4 words.
+   Example: "Reduce time-to-first-deployment for new engineers" → `reduce-time-to-first-deployment`
+2. Check if `initiatives/[slug]/` already exists.
+   - **Exists**: confirm with the user this is the same initiative. Note that files in `initiatives/[slug]/data/` are available as context.
+   - **Does not exist**: inform the user the folder structure will be created when the plan is saved.
+3. Confirm the slug with the user before proceeding to the draft.
+
 ---
 
 ## Facilitation behaviors
@@ -145,6 +156,23 @@ Show the full draft and ask:
 3. Cancel
 
 Do not finalize without explicit confirmation.
+
+---
+
+## Step 4: Create folder structure and save the plan
+
+After the user confirms:
+
+1. If `initiatives/[slug]/` does not exist, create the full structure:
+   ```
+   initiatives/[slug]/
+   ├── data/
+   ├── tmp/
+   ├── scripts/
+   └── output/
+   ```
+2. Save the plan to `initiatives/[slug]/output/initiative-plan.md`.
+3. Confirm: *"Initiative plan saved to `initiatives/[slug]/output/initiative-plan.md`."*
 
 ---
 

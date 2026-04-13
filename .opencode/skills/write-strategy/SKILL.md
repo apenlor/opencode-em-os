@@ -115,6 +115,18 @@ Do not finalize without explicit confirmation.
 
 ---
 
+## Step 4: Save the strategy
+
+After the user confirms:
+
+1. If the strategy belongs to an initiative, save to `initiatives/[initiative-name]/output/strategy-[slug].md`.
+2. If the initiative context is not clear, ask: *"Does this strategy belong to an initiative? If so, which one?"*
+3. If no initiative applies (team-level or org-level strategy), save to `data/strategies/[slug].md`.
+4. If the target directory does not exist, create it.
+5. Confirm the file path after saving.
+
+---
+
 ## Quality checklist (run before showing the draft)
 
 - [ ] The challenge is specific — not a general area of improvement

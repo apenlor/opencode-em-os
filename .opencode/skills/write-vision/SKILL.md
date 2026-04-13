@@ -118,6 +118,18 @@ Do not finalize without explicit confirmation.
 
 ---
 
+## Step 4: Save the vision
+
+After the user confirms:
+
+1. If the vision belongs to an initiative, save to `initiatives/[initiative-name]/output/vision-[slug].md`.
+2. If the initiative context is not clear, ask: *"Does this vision belong to an initiative? If so, which one?"*
+3. If no initiative applies (team-level or org-level vision), save to `data/visions/[slug].md`.
+4. If the target directory does not exist, create it.
+5. Confirm the file path after saving.
+
+---
+
 ## Quality checklist (run before showing the draft)
 
 - [ ] The vision statement is memorable and repeatable — not comprehensive
