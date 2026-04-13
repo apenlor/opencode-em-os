@@ -38,7 +38,8 @@ opencode-engineer-manager/
 ## Tooling Conventions
 
 - **CLI over MCP**: ALWAYS prefer CLI tools (`jira`, `gh`) and local bash scripts over MCP servers.
-- **Jira Operations**: For Jira actions, load the `jira` skill (or a project-specific variant like `jira-xxx`). Never call MCP Jira tools directly.
+- **Jira Operations**: For Jira actions, load the `jira` skill. Project-specific configuration (project key, base URL, cloud ID) is read from `data/jira/<project>.md`. Never call MCP Jira tools directly.
+- **Jira Projects**: Project configurations live in `data/jira/<project>.md`. When a Jira operation is needed and no project is specified, list available configs and ask. Read the config file to obtain project key, base URL, and cloud ID.
 - **Missing CLIs**: If a required CLI is not installed, suggest installation and configuration steps before attempting to proceed.
 
 ## Output Constraints

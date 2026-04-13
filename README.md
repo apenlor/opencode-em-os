@@ -44,14 +44,16 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 
 ### Project-Specific Jira
 
-For each Jira project you work with, copy and configure the Jira skill:
+For each Jira project you work with, create a config file:
 
 ```bash
-cp -r .opencode/skills/jira .opencode/skills/jira-xxx
-# Edit .opencode/skills/jira-xxx/SKILL.md:
-#   - Update name: jira-xxx
-#   - Replace {{PROJECT_KEY}}, {{CLOUD_ID}}, {{BASE_URL}}
+cp data/jira/example.md data/jira/myproject.md
+# Edit data/jira/myproject.md:
+#   - Set Project Key, Cloud ID, Base URL
+#   - Customize defaults and custom fields as needed
 ```
+
+The `jira` skill automatically discovers available projects from `data/jira/`.
 
 ## Usage
 

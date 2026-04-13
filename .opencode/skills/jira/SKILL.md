@@ -1,100 +1,69 @@
 ---
 name: jira
 description: >
-  General-purpose Jira skill for any Jira project. Use for creating issues
-  (Epic, Story, Bug, Task, Sub-task), querying issues, or updating issues.
+  Jira skill for creating, querying, and updating issues across any Jira project.
   Triggers: "create an epic", "create a bug", "show me bugs", "epics in progress",
-  "issues completed", or any Jira request. Also triggers when other skills reach
-  a Jira confirmation step.
+  "issues completed", "bugs due in N days", or any Jira request.
+  Also triggers when other skills (e.g. write-us, write-epic-build) reach a Jira
+  confirmation step.
 ---
 
-# Skill: Jira — Project
+# Skill: Jira
 
-## Manual Setup
+## Project Resolution
 
-Before using this skill, replace the following placeholders throughout this file — **including the `name:` and `description:` in the frontmatter above**:
+**Before any Jira operation**, identify the target project:
 
-- `name:` → use a short identifier for your project (e.g. `jira-platform`, `jira-core`)
-- `description:` → update "any Jira project" to mention your actual project name, so Claude picks the right skill when you have multiple
+1. If the user specified a project name or key, use it.
+2. If not, list the files in `data/jira/` — each file represents one configured project.
+   Ask: *"Which Jira project? Available: [list filenames without extension]"*
+3. Read `data/jira/<project>.md` to get the project's **Project Key**, **Base URL**, **Cloud ID**,
+   custom fields, and defaults.
+4. Use those values for all CLI commands in this conversation. Do not ask again.
 
-Then replace the configuration placeholders:
-
-| Placeholder | Description | How to find it |
-|---|---|---|
-| `{{PROJECT_KEY}}` | Your Jira project key | Visible in any issue key (e.g. `PLAT-123` → key is `PLAT`) |
-| `{{CLOUD_ID}}` | Your Atlassian Cloud ID | Run `jira config list` or extract from your Atlassian URL |
-| `{{BASE_URL}}` | Your Jira domain | e.g. `yourcompany.atlassian.net` |
-
-Delete this section and the "Auto-detection" section below once you've replaced the placeholders.
-
----
-
-## Auto-detection (always run this first)
-
-**Before doing anything else**, check if any placeholder is still unconfigured:
-
-- If `{{PROJECT_KEY}}` appears literally in this file → ask: *"What is your Jira project key? (e.g. PLAT, ENG, CORE)"*
-- If `{{CLOUD_ID}}` appears literally in this file → ask: *"What is your Atlassian Cloud ID? You can find it by running `jira config list` or from your Atlassian admin URL."*
-- If `{{BASE_URL}}` appears literally in this file → ask: *"What is your Jira domain? (e.g. yourcompany.atlassian.net)"*
-
-Once the user provides the values, use them for the rest of the conversation **without asking again**.
-
-Then ask: *"Should I save these values in the skill so you don't have to enter them again in future conversations?"*
-- If yes → edit this SKILL.md file, replacing each `{{PLACEHOLDER}}` with the value the user provided, and confirm when done.
-- If no → keep them only for this conversation.
-
----
-
-## Configuration
-
-| Field | Value |
-|---|---|
-| Project | {{PROJECT_KEY}} |
-| cloudId | {{CLOUD_ID}} |
-| Base URL | {{BASE_URL}} |
-| Assignee | None (unless user specifies) |
-| Reporter | Current user |
-| Priority | Medium (unless user specifies) |
-| Components | None by default |
-| Labels | None by default |
-
-**Supported issue types:** Epic, Story, Bug, Task, Sub-task
+If `data/jira/` is empty or missing, ask the user to create a config file:
+*"No Jira projects configured yet. Copy `data/jira/example.md` to `data/jira/<yourproject>.md`
+and fill in the project key, base URL, and cloud ID."*
 
 ---
 
 ## Tool usage
 
-**Always prefer the `jira` CLI.** Only fall back to MCP (`searchJiraIssuesUsingJql`, `createJiraIssue`, etc.) if the CLI is not available or a specific operation isn't supported by it.
+**Always prefer the `jira` CLI.** Only fall back to MCP (`searchJiraIssuesUsingJql`,
+`createJiraIssue`, etc.) if the CLI is not available or a specific operation is not
+supported by it.
 
 ### Jira CLI quick reference
 
 ```bash
 # Search / query
-jira issue list -p {{PROJECT_KEY}} --jql "<JQL>"
+jira issue list -p {project_key} --jql "<JQL>"
 
 # Create issue
-jira issue create -p {{PROJECT_KEY}} -t <IssueType> -s "<summary>" [flags]
+jira issue create -p {project_key} -t <IssueType> -s "<summary>" [flags]
 
 # View issue
 jira issue view <ISSUE-KEY>
 ```
 
+Where `{project_key}` is the value read from the project's config file in `data/jira/`.
+
 ---
 
 ## A. Querying issues
 
-Identify the query intent and build the appropriate JQL. Always scope to `project = {{PROJECT_KEY}}`.
+Identify the query intent and build the appropriate JQL. Always scope to `project = {project_key}`.
 
 ### Common queries
 
 | User request | JQL |
 |---|---|
-| Epics in progress | `project = {{PROJECT_KEY}} AND issuetype = Epic AND status = "In Progress" ORDER BY updated DESC` |
-| Bugs open / in progress | `project = {{PROJECT_KEY}} AND issuetype = Bug AND status != Done ORDER BY priority ASC, duedate ASC` |
-| Issues completed last N days | `project = {{PROJECT_KEY}} AND status = Done AND resolutiondate >= -Nd ORDER BY resolutiondate DESC` |
-| Issues of type X in status Y | `project = {{PROJECT_KEY}} AND issuetype = X AND status = "Y" ORDER BY updated DESC` |
-| Bugs due in ≤ N days | `project = {{PROJECT_KEY}} AND issuetype = Bug AND duedate <= Nd AND status != Done ORDER BY duedate ASC` |
-| All open issues | `project = {{PROJECT_KEY}} AND status != Done ORDER BY updated DESC` |
+| Epics in progress | `project = {project_key} AND issuetype = Epic AND status = "In Progress" ORDER BY updated DESC` |
+| Bugs open / in progress | `project = {project_key} AND issuetype = Bug AND status != Done ORDER BY priority ASC, duedate ASC` |
+| Issues completed last N days | `project = {project_key} AND status = Done AND resolutiondate >= -Nd ORDER BY resolutiondate DESC` |
+| Issues of type X in status Y | `project = {project_key} AND issuetype = X AND status = "Y" ORDER BY updated DESC` |
+| Bugs due in ≤ N days | `project = {project_key} AND issuetype = Bug AND duedate <= Nd AND status != Done ORDER BY duedate ASC` |
+| All open issues | `project = {project_key} AND status != Done ORDER BY updated DESC` |
 
 ### Output format for queries
 
@@ -160,11 +129,13 @@ Present the issue draft before creating. Ask the user to confirm or edit.
 
 ### Step 4 — Create via CLI
 
-**Always try the CLI first.** Do not skip to MCP because the description is long or structured — use `--body` or pass the description via stdin. Only fall back to MCP if the CLI command fails or explicitly does not support a required field.
+**Always try the CLI first.** Do not skip to MCP because the description is long or
+structured — use `--body` or pass the description via stdin. Only fall back to MCP if
+the CLI command fails or explicitly does not support a required field.
 
 ```bash
 jira issue create \
-  -p {{PROJECT_KEY}} \
+  -p {project_key} \
   -t "<IssueType>" \
   -s "<summary>" \
   [--priority "Medium"] \
@@ -176,8 +147,8 @@ If CLI flags don't support a field, fall back to `createJiraIssue` MCP with:
 
 ```json
 {
-  "cloudId": "{{CLOUD_ID}}",
-  "projectKey": "{{PROJECT_KEY}}",
+  "cloudId": "{cloud_id}",
+  "projectKey": "{project_key}",
   "issueType": "<IssueType>",
   "summary": "<summary>",
   "description": "<ADF description>",
@@ -187,20 +158,22 @@ If CLI flags don't support a field, fall back to `createJiraIssue` MCP with:
 }
 ```
 
-> **ADF note**: When using MCP, description must be in Atlassian Document Format (`type: "doc"`). Use level-2 headings for sections and paragraphs for content.
+> **ADF note**: When using MCP, description must be in Atlassian Document Format (`type: "doc"`).
+> Use level-2 headings for sections and paragraphs for content.
 
 ### Step 5 — Output after creation
 
 Share:
-- Direct link: `https://{{BASE_URL}}/browse/{{PROJECT_KEY}}-XXXX`
+- Direct link: `https://{base_url}/browse/{project_key}-XXXX`
 - Brief summary: type, title, parent (if any), due date (if set)
 
 ---
 
 ## General rules
 
-- Always scope queries to `project = {{PROJECT_KEY}}` — never query without the team filter
+- Always scope queries to `project = {project_key}` — never query without the project filter
 - Never invent issue keys, user IDs, or field values
 - If a field value is unknown, ask — don't guess
 - If the user says "N days", substitute the number directly into the JQL (e.g. `-7d`)
 - For date fields use ISO format: `YYYY-MM-DD`
+- `{project_key}`, `{cloud_id}`, `{base_url}` refer to values read from the project config file
