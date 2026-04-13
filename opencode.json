@@ -1,0 +1,42 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "default_agent": "manager",
+
+  "agent": {
+    "build": { "disable": true },
+    "plan": { "disable": true }
+  },
+
+  "share": "disabled",
+  "snapshot": false,
+
+  "instructions": [],
+
+  "mcp": {},
+
+  "permission": {
+    "*": "ask",
+    "read": "allow",
+    "edit": "ask",
+    "bash": {
+      "*": "ask",
+      "jira *": "allow",
+      "gh *": "allow",
+      "git log*": "allow",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "grep *": "allow",
+      "cat *": "allow",
+      "ls *": "allow",
+      "bash .opencode/scripts/*": "allow",
+      "rm -rf *": "deny"
+    },
+    "skill": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "webfetch": "deny",
+    "websearch": "deny",
+    "codesearch": "deny"
+  }
+}
