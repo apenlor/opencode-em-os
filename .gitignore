@@ -1,0 +1,15 @@
+# Environment
+.env.local
+.env
+
+# Temporary files
+tmp/
+*/tmp/
+
+# OS
+.DS_Store
+
+# Initiative data (user-specific, not shared)
+# Uncomment if you don't want to track initiative data:
+# */data/
+# */output/
