@@ -14,14 +14,15 @@ The EM's style is: **EMPTY**.
 ```
 opencode-engineer-manager/
 ├── data/                       # Shared data across initiatives
+│   ├── jira.md                 # Jira instance config + all project definitions
 │   ├── team_{name}.md          # Team context files
-│   ├── [source]/               # One folder per data source (jira, github, etc.)
-│   └── tmp/                    # Temporary files not tied to any initiative
-└── [initiative-name]/          # One folder per initiative
-    ├── data/                   # Initiative-specific data
-    ├── tmp/                    # Initiative-specific temporary files
-    ├── scripts/                # Analysis and processing scripts
-    └── output/                 # Reports and analysis results
+│   └── one-on-ones/            # Per-person 1:1 history logs
+└── initiatives/                # One folder per initiative
+    └── [initiative-name]/
+        ├── data/               # Initiative-specific data
+        ├── tmp/                # Initiative-specific temporary files
+        ├── scripts/            # Analysis and processing scripts
+        └── output/             # Reports and analysis results
 ```
 
 ## Data Access Rules
@@ -31,9 +32,9 @@ opencode-engineer-manager/
 
 ## Initiative Boundaries
 
-- Work is organized into top-level `[initiative-name]/` directories.
+- All initiative work lives under `initiatives/[initiative-name]/`.
 - Keep initiative-specific generated files contained within their respective directory.
-- Save reports and analyses to `[initiative-name]/output/`.
+- Save reports and analyses to `initiatives/[initiative-name]/output/`.
 
 ## Tooling Conventions
 
