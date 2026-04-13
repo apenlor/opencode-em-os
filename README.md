@@ -29,7 +29,7 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 
 1. **Clone this repository**:
    ```bash
-   git clone <repo-url> && cd opencode-em-os
+   git clone git@github.com:apenlor/opencode-em-os.git && cd opencode-em-os
    ```
 
 2. **Set up your environment**:
