@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.0.0 (2026-04-14)
+
+### Added
+- Isolated OpenCode runner (`opencode-em.sh`) to prevent global config bleeding
+- Project-level isolation via explicit `instructions` and `mcp` overrides in `opencode.json`
+- Local `.opencode-global/` mock directory for per-project config isolation
+- SSH clone URL and project badges in README
+
+### Changed
+- README: Updated Setup instructions to treat the repository as a template (use GitHub template feature)
+- README: Updated Setup flow to recommend isolated runner
+- README: Standardized repository name to `opencode-em-os`
+- .gitignore: Simplified data isolation options with clearer workspace/initiative distinction
+- opencode.json: Reorganized and cleaned up configuration structure
+
 ## v0.1.0 (2026-04-13)
 
 ### Added

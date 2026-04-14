@@ -1,6 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
+  "autoupdate": true,
+  "snapshot": false,
+  "share": "disabled",
+
   "default_agent": "manager",
 
   "agent": {
@@ -8,11 +12,7 @@
     "plan": { "disable": true }
   },
 
-  "share": "disabled",
-  "snapshot": false,
-
   "instructions": [],
-
   "mcp": {},
 
   "permission": {

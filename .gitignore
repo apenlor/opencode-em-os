@@ -9,7 +9,14 @@ tmp/
 # OS
 .DS_Store
 
-# Initiative data (user-specific, not shared)
-# Uncomment if you don't want to track initiative data:
-# */data/
-# */output/
+# Data & Initiatives (user-specific, typically not shared)
+# Uncomment to ignore:
+#
+# Workspace context (Jira, team, 1:1 logs):
+# data/
+#
+# Initiative work (PRDs, scripts, reports):
+# initiatives/
+
+# Isolated OpenCode global config (created by opencode-em.sh)
+.opencode-global/
