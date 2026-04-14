@@ -27,10 +27,13 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 
 ### Setup
 
-1. **Clone this repository**:
+1. **Create your workspace**:
+   Create a new private repository using this project as a template. You can click **Use this template** on GitHub, or use the GitHub CLI:
    ```bash
-   git clone git@github.com:apenlor/opencode-em-os.git && cd opencode-em-os
+   gh repo create my-em-workspace --template apenlor/opencode-em-os --private --clone
+   cd my-em-workspace
    ```
+   *(If you prefer a local-only workspace, clone this repo, `rm -rf .git`, and run `git init` to start a fresh history).*
 
 2. **Set up your environment**:
    ```bash
