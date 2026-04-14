@@ -12,6 +12,9 @@
     "plan": { "disable": true }
   },
 
+  "instructions": [],
+  "mcp": {},
+
   "permission": {
     "*": "ask",
     "read": "allow",

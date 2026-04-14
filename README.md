@@ -56,10 +56,13 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
    # Edit with your team's details (Jira emails, GitHub handles, etc.)
    ```
 
-5. **Start OpenCode**:
+5. **Start OpenCode** (optional but recommended):
    ```bash
-   opencode
+   ./opencode-em.sh
    ```
+   This wrapper script isolates OpenCode from your global configuration (`~/.config/opencode`), preventing global config models, skills, plugins, and MCP servers from bleeding into this project. Running this project isolated from global configs is highly recommended.
+
+   > On first run inside isolated mode, you'll need to configure your AI provider using the `/connect` command.
 
 6. On the first run, the EM agent will ask for your management style. Write 2–4 sentences covering your decision-making approach, preferred challenge level, communication tone, and focus areas. The more specific you are, the better the agent adapts. See `AGENTS.md` for examples and prompts.
 
@@ -170,10 +173,20 @@ The agent automatically loads these skills based on your request.
 
 ## Isolation & Security
 
-This workspace is designed to run independently of any global OpenCode configuration:
-- `instructions: []` in `opencode.json` prevents global rules from bleeding in.
-- `mcp: {}` disables globally-configured MCP servers.
-- Permissions are explicitly defined at the workspace level, favoring CLI tools over MCP for transparency and speed.
+This workspace is designed to run independently of any global OpenCode configuration.
+
+**How it works:**
+- `opencode-em.sh` overrides `XDG_CONFIG_HOME` to a local `.opencode-global/` directory, creating a clean global config namespace per project.
+- On first run, the script bootstraps a minimal empty config so OpenCode starts clean.
+- The project-level `opencode.json` controls all agent, permission, and sharing settings.
+- `.opencode-global/` is git-ignored so each user gets their own isolated environment.
+
+**What this prevents:**
+- Global models, plugins, and MCP servers from affecting this project.
+- Global `AGENTS.md` rules from leaking in.
+- Provider credentials from being shared — each user runs `/connect` once inside the isolated session.
+
+> If you prefer running `opencode` directly without isolation, it will still work — but global settings will merge with the project config per OpenCode's [precedence rules](https://opencode.ai/docs/config/#precedence-order).
 
 ## License
 
