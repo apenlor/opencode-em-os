@@ -2,20 +2,43 @@
 
 set -euo pipefail
 
+# --- Parameter check ---
+if [[ $# -ne 4 ]]; then
+	echo "Usage: $0 <github_username> <jira_email> <from_date:YYYY-MM-DD> <to_date:YYYY-MM-DD>" >&2
+	echo "" >&2
+	echo "Example: $0 octocat user@company.com 2026-03-01 2026-03-31" >&2
+	exit 1
+fi
+
 GITHUB_USER=$1
 JIRA_EMAIL_USER=$2
 FROM=$3
 TO=$4
 
-# Load credentials
+# --- Date format validation ---
+date_regex='^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+if [[ ! "$FROM" =~ $date_regex ]] || [[ ! "$TO" =~ $date_regex ]]; then
+	echo "Error: Dates must be in YYYY-MM-DD format." >&2
+	exit 1
+fi
+
+# --- Load credentials ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="$SCRIPT_DIR/../../.env.local"
 if [[ -f "$ENV_FILE" ]]; then
 	# shellcheck disable=SC1090
 	source "$ENV_FILE"
 fi
-export GH_TOKEN=${GITHUB_TOKEN:-${GH_TOKEN:-}}
-export JIRA_API_TOKEN=${JIRA_TOKEN:-${JIRA_API_TOKEN:-}}
+export GH_TOKEN="${GITHUB_TOKEN:-}"
+export JIRA_API_TOKEN="${JIRA_API_TOKEN:-}"
+
+# --- Validate required env vars ---
+for var in GH_TOKEN JIRA_API_TOKEN JIRA_EMAIL JIRA_URL; do
+	if [[ -z "${!var:-}" ]]; then
+		echo "Error: $var is not set. Check your .env.local file." >&2
+		exit 1
+	fi
+done
 
 # Compute period_days from FROM and TO
 if date -v-1d +"%Y-%m-%d" &>/dev/null 2>&1; then
@@ -140,10 +163,11 @@ ISSUE_CYCLE_TIME_DAYS=$(
 mkdir -p "$OUT_DIR/pr_details"
 jq -r '.[] | .repository.nameWithOwner + " " + (.number | tostring)' "$OUT_DIR/prs.json" |
 	while read -r repo number; do
+		safe_repo="${repo//\//_}"
 		gh api "repos/$repo/pulls/$number" \
 			--jq '{additions, deletions, comments, review_comments, created_at, merged_at,
            pr_author: .user.login}' \
-			>"$OUT_DIR/pr_details/${number}.json" 2>/dev/null || true
+			>"$OUT_DIR/pr_details/${safe_repo}_${number}.json" 2>/dev/null || true
 	done
 
 # aggregate PR details
@@ -179,18 +203,19 @@ mkdir -p "$OUT_DIR/reviewed_pr_details"
 mkdir -p "$OUT_DIR/reviewed_pr_reviews"
 jq -r '.[] | .repository.nameWithOwner + " " + (.number | tostring)' "$OUT_DIR/reviews.json" |
 	while read -r repo number; do
+		safe_repo="${repo//\//_}"
 		gh api "repos/$repo/pulls/$number" \
 			--jq '{created_at, pr_author: .user.login}' \
-			>"$OUT_DIR/reviewed_pr_details/${number}.json" 2>/dev/null || true
+			>"$OUT_DIR/reviewed_pr_details/${safe_repo}_${number}.json" 2>/dev/null || true
 		gh api "repos/$repo/pulls/$number/reviews" \
 			--jq "[.[] | select(.user.login == \"$GITHUB_USER\" and .state != \"PENDING\")]" \
-			>"$OUT_DIR/reviewed_pr_reviews/${number}.json" 2>/dev/null || true
+			>"$OUT_DIR/reviewed_pr_reviews/${safe_repo}_${number}.json" 2>/dev/null || true
 	done
 
 AVG_TIME_TO_FIRST_REVIEW=$(
 	for f in "$OUT_DIR/reviewed_pr_details"/*.json; do
-		number=$(basename "$f" .json)
-		reviews_file="$OUT_DIR/reviewed_pr_reviews/${number}.json"
+		filename=$(basename "$f" .json)
+		reviews_file="$OUT_DIR/reviewed_pr_reviews/${filename}.json"
 		[ -f "$reviews_file" ] || continue
 		jq -n \
 			--slurpfile detail "$f" \
