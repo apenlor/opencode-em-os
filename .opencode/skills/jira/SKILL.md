@@ -20,7 +20,7 @@ description: >
 3. Read the relevant `### <PROJECT>` section in `data/jira.md` to get the **Project Key**,
    custom fields, and defaults.
 4. Read the `## Instance` section in `data/jira.md` to get the **Base URL** and **Cloud ID**.
-5. Use those values for all API commands in this conversation. Do not ask again.
+5. Use those values for all commands in this conversation. Do not ask again.
 
 If `data/jira.md` is missing or has no projects configured, ask the user to add a project:
 *"No Jira projects configured yet. Edit `data/jira.md` and add a project under `## Projects`
@@ -28,20 +28,39 @@ following the existing template."*
 
 ---
 
+## Prerequisites
+
+The `jira` CLI ([ankitpokhrel/jira-cli](https://github.com/ankitpokhrel/jira-cli)) must be installed and initialized:
+
+```bash
+# Install (macOS)
+brew install ankitpokhrel/jira-cli/jira-cli
+
+# One-time setup — run this once per machine
+export JIRA_API_TOKEN=<your-token>
+jira init
+```
+
+The `JIRA_API_TOKEN` env var is also used by `curl`-based queries and scripts (sourced from `.env.local`). It serves both consumers.
+
 ## Tool usage
 
-**Always use curl to call the Jira REST API v3.** Use the credentials from `.env.local` (`$JIRA_EMAIL:$JIRA_API_TOKEN`). 
+Use the right tool for each operation type:
 
-Source `.env.local` to get credentials before making Jira `curl` calls.
+| Operation | Tool | Why |
+|---|---|---|
+| **Creating issues** | `jira` CLI | Accepts plain markdown; converts to ADF automatically. No manual JSON payload. |
+| **Querying issues** | `curl` (REST API v3) | Lightweight. No ADF involved in responses. Faster for read-only operations. |
 
-Example of making a request to the REST API:
+Source `.env.local` before any `curl` call:
+
 ```bash
 source .env.local
 curl -s -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" -H "Content-Type: application/json" \
   "https://{base_url}/rest/api/3/search/jql?jql=project%3D{project_key}"
 ```
 
-Only fall back to MCP (`searchJiraIssuesUsingJql`, `createJiraIssue`, etc.) if `curl` fails or a specific operation is too complex to script manually.
+Only fall back to MCP (`searchJiraIssuesUsingJql`, `createJiraIssue`, etc.) if both CLI and `curl` fail or a specific operation is not supported by either.
 
 ---
 
@@ -122,20 +141,39 @@ Present the issue draft before creating. Ask the user to confirm or edit.
 
 **Do not create in Jira until explicit confirmation.**
 
-### Step 4 — Create via REST API
+### Step 4 — Create via CLI
 
-**Always try `curl` first.** Only fall back to MCP if
-the `curl` command fails or you're unable to map a required field properly to the JSON payload.
+**Always use the `jira` CLI for issue creation.** It accepts plain markdown descriptions and converts them to Atlassian Document Format (ADF) automatically — no manual JSON payload needed.
+
+```bash
+# Ensure JIRA_API_TOKEN is available
+source .env.local
+
+# Basic creation
+jira issue create \
+  -p {project_key} \
+  -t "<IssueType>" \
+  -s "<summary>" \
+  --body "<markdown description or $(cat path/to/file.md)>" \
+  [--priority "Medium"] \
+  [--custom "duedate=YYYY-MM-DD"] \
+  [--parent "<PARENT-KEY>"]
+```
+
+When the description comes from a saved markdown file (e.g. a draft epic), pass the file content directly:
 
 ```bash
 source .env.local
-curl -X POST -s -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  --data '{"fields":{"project":{"key":"{project_key}"},"summary":"<summary>","description":{"type":"doc","version":1,"content":[{"type":"paragraph","content":[{"text":"<description>","type":"text"}]}]},"issuetype":{"name":"<IssueType>"}}}' \
-  "https://{base_url}/rest/api/3/issue"
+jira issue create \
+  -p {project_key} \
+  -t "Epic" \
+  -s "<summary>" \
+  --body "$(cat initiatives/[name]/output/epic-build-[slug].md)"
 ```
 
-If the payload construction is too complex or fails, fall back to `createJiraIssue` MCP with:
+**Do not construct ADF JSON manually.** The CLI handles the conversion.
+
+If the CLI is not available or a required field is not supported by it, fall back to `createJiraIssue` MCP with:
 
 ```json
 {
@@ -150,7 +188,7 @@ If the payload construction is too complex or fails, fall back to `createJiraIss
 }
 ```
 
-> **ADF note**: When using MCP, description must be in Atlassian Document Format (`type: "doc"`).
+> **ADF note for MCP fallback**: description must be in Atlassian Document Format (`type: "doc"`).
 > Use level-2 headings for sections and paragraphs for content.
 
 ### Step 5 — Output after creation

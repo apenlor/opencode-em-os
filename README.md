@@ -23,6 +23,7 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 
 *   [OpenCode](https://opencode.ai) installed.
 *   [GitHub CLI](https://cli.github.com/) installed and authenticated.
+*   [Jira CLI](https://github.com/ankitpokhrel/jira-cli) installed and initialized (required for creating Jira issues).
 
 ### Setup
 
@@ -41,10 +42,17 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 
    # Configure Jira credentials
    cp .env.example .env.local
-   # Edit .env.local with your Jira credentials
+   # Edit .env.local with your Jira email, API token, and instance URL
    ```
 
-3. **Configure your Jira instance and projects** in `data/jira.md`:
+3. **Initialize the Jira CLI** (one-time per machine):
+   ```bash
+   source .env.local
+   jira init
+   ```
+   When prompted, select `Cloud`, enter your Jira domain (e.g. `yourcompany.atlassian.net`), and follow the steps. The CLI stores its config at `~/.config/.jira/`. The same `JIRA_API_TOKEN` from `.env.local` is used by both the CLI and curl-based scripts.
+
+4. **Configure your Jira instance and projects** in `data/jira.md`:
    ```markdown
    ## Instance
    Base URL: yourcompany.atlassian.net
@@ -56,13 +64,13 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
    ...
    ```
 
-4. **Add your team data**:
+5. **Add your team data**:
    ```bash
    cp data/team_example.md data/team_myteam.md
    # Edit with your team's details (Jira emails, GitHub handles, etc.)
    ```
 
-5. **Start OpenCode** (optional but recommended):
+6. **Start OpenCode** (optional but recommended):
    ```bash
    ./opencode-em.sh
    ```
@@ -70,7 +78,7 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 
    > On first run inside isolated mode, you'll need to configure your AI provider using the `/connect` command.
 
-6. On the first run, the EM agent will ask for your management style. Write 2–4 sentences covering your decision-making approach, preferred challenge level, communication tone, and focus areas. The more specific you are, the better the agent adapts. See `AGENTS.md` for examples and prompts.
+7. On the first run, the EM agent will ask for your management style. Write 2–4 sentences covering your decision-making approach, preferred challenge level, communication tone, and focus areas. The more specific you are, the better the agent adapts. See `AGENTS.md` for examples and prompts.
 
 ## Workspace Structure
 
@@ -98,7 +106,8 @@ opencode-em-os/
 
 | What | Where | Why |
 |---|---|---|
-| Jira token, Jira email | `.env.local` | Secrets: never committed. |
+| Jira token, Jira email | `.env.local` | Secrets: never committed. Used by curl-based scripts and the Jira CLI. |
+| Jira CLI server config | `~/.config/.jira/` (via `jira init`) | CLI auth and server URL; separate from workspace files. |
 | GitHub authentication | `gh auth login` | Stored in OS keyring by the GitHub CLI. |
 | Jira instance URL, Cloud ID | `data/jira.md` | Non-secret, instance-level configuration. |
 | Jira project key, defaults, issue types | `data/jira.md` | Project-specific routing and rules. |
@@ -126,7 +135,7 @@ Drive a new project from idea to execution.
    > "Help me plan the backend rewrite initiative."
 2. **Provide Raw Context** (optional): Drop PRDs or raw notes into `initiatives/[slug]/data/` for the agent to reference.
 3. **Draft Execution Items**: Once the plan is solid, generate strategies, visions, epics, or stories. Authoring skills save output to `initiatives/[slug]/output/` automatically.
-4. **Push to Jira**: Leverage the built-in API integration via the `jira` skill:
+4. **Push to Jira**: Leverage the built-in CLI integration via the `jira` skill:
    > "Create these epics in the 'PROJ' Jira project."
 
 ### 2. The 1:1 Lifecycle
