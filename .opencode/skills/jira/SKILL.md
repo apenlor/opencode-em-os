@@ -37,7 +37,8 @@ The `jira` CLI ([ankitpokhrel/jira-cli](https://github.com/ankitpokhrel/jira-cli
 brew install ankitpokhrel/jira-cli/jira-cli
 
 # One-time setup — run this once per machine
-export JIRA_API_TOKEN=<your-token>
+# set -a exports all variables from .env.local to child processes (including the jira CLI)
+set -a; source .env.local; set +a
 jira init
 ```
 
@@ -52,10 +53,10 @@ Use the right tool for each operation type:
 | **Creating issues** | `jira` CLI | Accepts plain markdown; converts to ADF automatically. No manual JSON payload. |
 | **Querying issues** | `curl` (REST API v3) | Lightweight. No ADF involved in responses. Faster for read-only operations. |
 
-Source `.env.local` before any `curl` call:
+Source `.env.local` before any `curl` call. Use `set -a` to export variables to child processes:
 
 ```bash
-source .env.local
+set -a; source .env.local; set +a
 curl -s -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" -H "Content-Type: application/json" \
   "https://{base_url}/rest/api/3/search/jql?jql=project%3D{project_key}"
 ```
@@ -146,8 +147,8 @@ Present the issue draft before creating. Ask the user to confirm or edit.
 **Always use the `jira` CLI for issue creation.** It accepts plain markdown descriptions and converts them to Atlassian Document Format (ADF) automatically — no manual JSON payload needed.
 
 ```bash
-# Ensure JIRA_API_TOKEN is available
-source .env.local
+# Export variables from .env.local to child processes (required for the jira CLI)
+set -a; source .env.local; set +a
 
 # Basic creation
 jira issue create \
@@ -163,7 +164,7 @@ jira issue create \
 When the description comes from a saved markdown file (e.g. a draft epic), pass the file content directly:
 
 ```bash
-source .env.local
+set -a; source .env.local; set +a
 jira issue create \
   -p {project_key} \
   -t "Epic" \

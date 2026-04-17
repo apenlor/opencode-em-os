@@ -47,10 +47,13 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 
 3. **Initialize the Jira CLI** (one-time per machine):
    ```bash
-   source .env.local
+   # set -a exports all variables from .env.local so the jira CLI process can read them
+   set -a; source .env.local; set +a
    jira init
    ```
    When prompted, select `Cloud`, enter your Jira domain (e.g. `yourcompany.atlassian.net`), and follow the steps. The CLI stores its config at `~/.config/.jira/`. The same `JIRA_API_TOKEN` from `.env.local` is used by both the CLI and curl-based scripts.
+
+   > **Auth type**: For Jira Cloud, do **not** set `JIRA_AUTH_TYPE=bearer` — that is for on-premise PAT authentication only. Cloud uses Basic Auth (email + API token) by default.
 
 4. **Configure your Jira instance and projects** in `data/jira.md`:
    ```markdown
