@@ -171,6 +171,7 @@ The agent automatically loads these skills based on your request.
 | `us-mapping` | "user story map", "story mapping" |
 | `write-epic-build` | "write an epic", "implementation plan" |
 | `write-epic-technical-discovery` | "technical discovery", "discovery epic" |
+| `decompose-epic` | "decompose this epic", "break down epic", "stories from epic" |
 | `write-us` | "write a user story", "write a US" |
 
 > These skills produce local artifacts in `initiatives/[name]/output/`. They offer to push content to Jira as a follow-up step.
