@@ -56,18 +56,23 @@ fi
 
 DAYS=$(((TO_TS - FROM_TS) / 86400 + 1))
 
-# --- Load credentials ---
+# --- Load Jira credentials ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="$SCRIPT_DIR/../../.env.local"
 if [[ -f "$ENV_FILE" ]]; then
 	# shellcheck disable=SC1090
 	source "$ENV_FILE"
 fi
-export GH_TOKEN="${GITHUB_TOKEN:-}"
 export JIRA_API_TOKEN="${JIRA_API_TOKEN:-}"
 
-# --- Validate required env vars ---
-for var in GH_TOKEN JIRA_API_TOKEN JIRA_EMAIL JIRA_URL; do
+# --- Validate GitHub CLI authentication ---
+if ! gh auth status &>/dev/null; then
+	echo "Error: GitHub CLI is not authenticated. Run 'gh auth login' first." >&2
+	exit 1
+fi
+
+# --- Validate required Jira env vars ---
+for var in JIRA_API_TOKEN JIRA_EMAIL JIRA_URL; do
 	if [[ -z "${!var:-}" ]]; then
 		echo "Error: $var is not set. Check your .env.local file." >&2
 		exit 1

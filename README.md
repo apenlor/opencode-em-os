@@ -36,8 +36,12 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 
 2. **Set up your environment**:
    ```bash
+   # Authenticate with GitHub (if not already done)
+   gh auth login
+
+   # Configure Jira credentials
    cp .env.example .env.local
-   # Edit .env.local with your GitHub token and Jira credentials
+   # Edit .env.local with your Jira credentials
    ```
 
 3. **Configure your Jira instance and projects** in `data/jira.md`:
@@ -94,7 +98,8 @@ opencode-em-os/
 
 | What | Where | Why |
 |---|---|---|
-| GitHub token, Jira token, Jira email | `.env.local` | Secrets: never committed. |
+| Jira token, Jira email | `.env.local` | Secrets: never committed. |
+| GitHub authentication | `gh auth login` | Stored in OS keyring by the GitHub CLI. |
 | Jira instance URL, Cloud ID | `data/jira.md` | Non-secret, instance-level configuration. |
 | Jira project key, defaults, issue types | `data/jira.md` | Project-specific routing and rules. |
 | Team member names, GitHub handles | `data/team_*.md` | Team context for skills and commands. |
@@ -109,7 +114,7 @@ The `@manager` agent operates on a **strict explicit context** rule. To keep you
 4. Files you explicitly point it to in your prompt (e.g., "Review initiatives/backend-rewrite/data/specs.md").
 5. Context provided via loaded skills.
 
-Authentication tokens in `.env.local` are consumed only by scripts. The agent never reads them directly.
+Jira credentials in `.env.local` are consumed only by scripts. GitHub authentication uses the native `gh auth login` session stored in your OS keyring. The agent never reads secrets directly.
 
 ## Typical Workflows
 
