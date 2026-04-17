@@ -143,10 +143,11 @@ jira_search() {
 fetch_pr_detail() {
 	local repo="$1" number="$2" out_dir="$3"
 	local safe_repo="${repo//\//_}"
-	gh api "repos/$repo/pulls/$number" \
-		--jq '{additions, deletions, comments, review_comments, created_at, merged_at,
-           pr_author: .user.login}' \
-		>"$out_dir/pr_details/${safe_repo}_${number}.json" 2>/dev/null || true
+	local out_file="$out_dir/pr_details/${safe_repo}_${number}.json"
+	local res
+	if res=$(gh api "repos/$repo/pulls/$number" 2>/dev/null); then
+		echo "$res" | jq '{additions, deletions, comments, review_comments, created_at, merged_at, pr_author: .user.login}' >"$out_file" 2>/dev/null || true
+	fi
 }
 export -f fetch_pr_detail
 
@@ -154,12 +155,15 @@ export -f fetch_pr_detail
 fetch_reviewed_pr() {
 	local repo="$1" number="$2" out_dir="$3" github_user="$4"
 	local safe_repo="${repo//\//_}"
-	gh api "repos/$repo/pulls/$number" \
-		--jq '{created_at, pr_author: .user.login}' \
-		>"$out_dir/reviewed_pr_details/${safe_repo}_${number}.json" 2>/dev/null || true
-	gh api "repos/$repo/pulls/$number/reviews" \
-		--jq "[.[] | select(.user.login == \"$github_user\" and .state != \"PENDING\")]" \
-		>"$out_dir/reviewed_pr_reviews/${safe_repo}_${number}.json" 2>/dev/null || true
+	local out_detail="$out_dir/reviewed_pr_details/${safe_repo}_${number}.json"
+	local out_reviews="$out_dir/reviewed_pr_reviews/${safe_repo}_${number}.json"
+	local res
+	if res=$(gh api "repos/$repo/pulls/$number" 2>/dev/null); then
+		echo "$res" | jq '{created_at, pr_author: .user.login}' >"$out_detail" 2>/dev/null || true
+		gh api "repos/$repo/pulls/$number/reviews" \
+			--jq "[.[] | select(.user.login == \"$github_user\" and .state != \"PENDING\")]" \
+			>"$out_reviews" 2>/dev/null || true
+	fi
 }
 export -f fetch_reviewed_pr
 
@@ -173,7 +177,7 @@ fi
 gh search prs \
 	--author "$GITHUB_USER" \
 	--merged \
-	--created "$FROM..$TO" \
+	--merged-at "$FROM..$TO" \
 	--limit 200 \
 	--json number,createdAt,closedAt,title,repository \
 	"${GH_OWNER_FLAG[@]}" \
@@ -183,7 +187,7 @@ gh search prs \
 gh search prs \
 	--author "$GITHUB_USER" \
 	--state closed \
-	--created "$FROM..$TO" \
+	--closed "$FROM..$TO" \
 	--limit 200 \
 	--json number,repository,state \
 	"${GH_OWNER_FLAG[@]}" \
@@ -201,7 +205,7 @@ gh search prs \
 # --- GitHub Reviews given ---
 gh search prs \
 	--reviewed-by "$GITHUB_USER" \
-	--created "$FROM..$TO" \
+	--updated "$FROM..$TO" \
 	--limit 200 \
 	--json number,repository \
 	"${GH_OWNER_FLAG[@]}" \
