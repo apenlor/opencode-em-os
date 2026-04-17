@@ -53,10 +53,15 @@ Use the right tool for each operation type:
 | **Creating issues** | `jira` CLI | Accepts plain markdown; converts to ADF automatically. No manual JSON payload. |
 | **Querying issues** | `curl` (REST API v3) | Lightweight. No ADF involved in responses. Faster for read-only operations. |
 
-Source `.env.local` before any `curl` call. Use `set -a` to export variables to child processes:
+Before any Jira operation, ensure credentials are exported to the shell. Run this once per terminal session:
 
 ```bash
 set -a; source .env.local; set +a
+```
+
+Then use `curl` for queries:
+
+```bash
 curl -s -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" -H "Content-Type: application/json" \
   "https://{base_url}/rest/api/3/search/jql?jql=project%3D{project_key}"
 ```
@@ -147,7 +152,7 @@ Present the issue draft before creating. Ask the user to confirm or edit.
 **Always use the `jira` CLI for issue creation.** It accepts plain markdown descriptions and converts them to Atlassian Document Format (ADF) automatically — no manual JSON payload needed.
 
 ```bash
-# Export variables from .env.local to child processes (required for the jira CLI)
+# Export credentials once per session before using jira CLI or curl
 set -a; source .env.local; set +a
 
 # Basic creation
@@ -164,7 +169,6 @@ jira issue create \
 When the description comes from a saved markdown file (e.g. a draft epic), pass the file content directly:
 
 ```bash
-set -a; source .env.local; set +a
 jira issue create \
   -p {project_key} \
   -t "Epic" \
