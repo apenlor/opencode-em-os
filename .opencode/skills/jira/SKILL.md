@@ -20,7 +20,7 @@ description: >
 3. Read the relevant `### <PROJECT>` section in `data/jira.md` to get the **Project Key**,
    custom fields, and defaults.
 4. Read the `## Instance` section in `data/jira.md` to get the **Base URL** and **Cloud ID**.
-5. Use those values for all CLI commands in this conversation. Do not ask again.
+5. Use those values for all API commands in this conversation. Do not ask again.
 
 If `data/jira.md` is missing or has no projects configured, ask the user to add a project:
 *"No Jira projects configured yet. Edit `data/jira.md` and add a project under `## Projects`
@@ -30,24 +30,18 @@ following the existing template."*
 
 ## Tool usage
 
-**Always prefer the `jira` CLI.** Only fall back to MCP (`searchJiraIssuesUsingJql`,
-`createJiraIssue`, etc.) if the CLI is not available or a specific operation is not
-supported by it.
+**Always use curl to call the Jira REST API v3.** Use the credentials from `.env.local` (`$JIRA_EMAIL:$JIRA_API_TOKEN`). 
 
-### Jira CLI quick reference
+Source `.env.local` to get credentials before making Jira `curl` calls.
 
+Example of making a request to the REST API:
 ```bash
-# Search / query
-jira issue list -p {project_key} --jql "<JQL>"
-
-# Create issue
-jira issue create -p {project_key} -t <IssueType> -s "<summary>" [flags]
-
-# View issue
-jira issue view <ISSUE-KEY>
+source .env.local
+curl -s -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" -H "Content-Type: application/json" \
+  "https://{base_url}/rest/api/3/search/jql?jql=project%3D{project_key}"
 ```
 
-Where `{project_key}` is the value read from the project's section in `data/jira.md`.
+Only fall back to MCP (`searchJiraIssuesUsingJql`, `createJiraIssue`, etc.) if `curl` fails or a specific operation is too complex to script manually.
 
 ---
 
@@ -128,23 +122,20 @@ Present the issue draft before creating. Ask the user to confirm or edit.
 
 **Do not create in Jira until explicit confirmation.**
 
-### Step 4 — Create via CLI
+### Step 4 — Create via REST API
 
-**Always try the CLI first.** Do not skip to MCP because the description is long or
-structured — use `--body` or pass the description via stdin. Only fall back to MCP if
-the CLI command fails or explicitly does not support a required field.
+**Always try `curl` first.** Only fall back to MCP if
+the `curl` command fails or you're unable to map a required field properly to the JSON payload.
 
 ```bash
-jira issue create \
-  -p {project_key} \
-  -t "<IssueType>" \
-  -s "<summary>" \
-  [--priority "Medium"] \
-  [--custom "duedate=YYYY-MM-DD"] \
-  [--parent "<PARENT-KEY>"]
+source .env.local
+curl -X POST -s -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  --data '{"fields":{"project":{"key":"{project_key}"},"summary":"<summary>","description":{"type":"doc","version":1,"content":[{"type":"paragraph","content":[{"text":"<description>","type":"text"}]}]},"issuetype":{"name":"<IssueType>"}}}' \
+  "https://{base_url}/rest/api/3/issue"
 ```
 
-If CLI flags don't support a field, fall back to `createJiraIssue` MCP with:
+If the payload construction is too complex or fails, fall back to `createJiraIssue` MCP with:
 
 ```json
 {
