@@ -2,6 +2,7 @@
 
 ## Overview
 - Team name: Example Team
+- GitHub org: my-organization
 
 ## Repositories
 - backend: https://github.com/yourorg/backend

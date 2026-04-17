@@ -22,7 +22,6 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 ### Prerequisites
 
 *   [OpenCode](https://opencode.ai) installed.
-*   [Jira CLI](https://github.com/ankitpokhrel/jira-cli) installed and configured.
 *   [GitHub CLI](https://cli.github.com/) installed and authenticated.
 
 ### Setup
@@ -122,7 +121,7 @@ Drive a new project from idea to execution.
    > "Help me plan the backend rewrite initiative."
 2. **Provide Raw Context** (optional): Drop PRDs or raw notes into `initiatives/[slug]/data/` for the agent to reference.
 3. **Draft Execution Items**: Once the plan is solid, generate strategies, visions, epics, or stories. Authoring skills save output to `initiatives/[slug]/output/` automatically.
-4. **Push to Jira**: Leverage the built-in CLI integration:
+4. **Push to Jira**: Leverage the built-in API integration via the `jira` skill:
    > "Create these epics in the 'PROJ' Jira project."
 
 ### 2. The 1:1 Lifecycle

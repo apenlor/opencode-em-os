@@ -50,7 +50,7 @@ Always prefer CLI and local scripts over MCP tools. This saves tokens and keeps 
 
 **Priority order:**
 1. **Skills** — load the appropriate skill when one exists for the operation (e.g., `jira` skill for Jira work)
-2. **CLI tools** (`jira`, `gh`) — use directly when no skill covers the operation
+2. **CLI tools** (`gh`) — use directly when no skill covers the operation
 3. **Bash scripts** — scripts under `.opencode/scripts/` or ad-hoc bash using CLI tools / REST APIs
 4. **MCP tools** — only when CLI/bash is not feasible, or the user explicitly asks for it
 
