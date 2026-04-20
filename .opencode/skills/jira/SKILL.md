@@ -177,6 +177,32 @@ Share:
 - Direct link: `https://{base_url}/browse/{project_key}-XXXX`
 - Brief summary: type, title, parent (if any), due date (if set)
 
+### Step 6 — Update source file (if applicable)
+
+If the caller provided a **source file path** (e.g., the `.md` file that was saved before invoking this skill), update that file to record the Jira issue metadata.
+
+**How to update the file:**
+
+1. Read the file.
+2. If the file already begins with a YAML frontmatter block (first line is `---`), add the Jira fields inside that block before the closing `---`.
+3. If the file has no frontmatter, prepend a new block at the very top:
+
+```markdown
+---
+jira_key: {PROJECT_KEY}-XXXX
+jira_url: https://{base_url}/browse/{PROJECT_KEY}-XXXX
+jira_synced_at: YYYY-MM-DD
+---
+```
+
+4. Confirm the update: *"Updated `[file path]` with Jira issue `{PROJECT_KEY}-XXXX`."*
+
+**Rules:**
+- Only do this if a source file path was explicitly passed by the caller.
+- Never invent a file path — if no path was given, skip this step silently.
+- If the file does not exist at the given path, warn the user and skip.
+- Do not modify any other content of the file — only prepend or merge the frontmatter block.
+
 ---
 
 ## General rules

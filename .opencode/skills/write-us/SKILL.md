@@ -209,7 +209,7 @@ After the user confirms and **before** offering to create in Jira:
 2. If the initiative context is not clear, ask: *"Which initiative does this story belong to?"* and list existing folders under `initiatives/`.
 3. If the initiative folder does not exist, create the full structure (`data/`, `tmp/`, `scripts/`, `output/`).
 4. Confirm the file path after saving.
-5. Then ask: *"Want me to create this story in Jira?"* — if yes, invoke the `jira` skill.
+5. Then ask: *"Want me to create this story in Jira?"* — if yes, invoke the `jira` skill and **pass the saved file path** so the `jira` skill can write back the issue key and URL into the file's frontmatter after creation.
 
 ---
 
