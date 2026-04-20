@@ -7,177 +7,61 @@ An Engineering Manager Operating System (EM-OS) built natively for [OpenCode](ht
 
 ## What This Does
 
-Transforms OpenCode into a context-aware Engineering Manager assistant with:
+Transforms OpenCode into a context-aware Engineering Manager assistant. It encodes proven management frameworks into automated workflows for initiative planning, 1:1 lifecycle management, strategy development, and product delivery.
 
-*   **Structured initiative planning**: from rough ideas to scoped plans with epics.
-*   **1:1 lifecycle management**: situation analysis, preparation, and historical logging.
-*   **Strategy and vision writing**: following Rumelt and Larson frameworks.
-*   **Epic and user story drafting**: build epics, discovery epics, INVEST-compliant stories.
-*   **IC activity analysis**: automated metrics from Jira and GitHub.
-*   **User story mapping**: from PRDs and Figma contexts to structured story maps.
-*   **Initiative cleanup**: inventory, promote, consolidate, and tidy output artifacts.
-*   **Leadership mentoring**: Engineering Director perspective to sharpen your thinking.
+For deep dives into concepts like strategy kernels, vision frameworks, and the OS architecture, see the [Full Guide](./GUIDE.md).
 
 ## Quick Start
 
-### Prerequisites
+1.  **Create your workspace**: Use this repository as a template.
+    ```bash
+    gh repo create my-em-workspace --template apenlor/opencode-em-os --private --clone
+    cd my-em-workspace
+    ```
 
-*   [OpenCode](https://opencode.ai) installed.
-*   [GitHub CLI](https://cli.github.com/) installed and authenticated.
-*   [Jira CLI](https://github.com/ankitpokhrel/jira-cli) installed and initialized (required for creating Jira issues).
+2.  **Environment**: Copy `.env.example` to `.env.local` and add your Jira credentials. Authenticate with `gh auth login`.
 
-### Setup
+3.  **Jira CLI**: Initialize the Jira CLI (one-time step).
+    ```bash
+    set -a; source .env.local; set +a
+    jira init
+    ```
 
-1. **Create your workspace**:
-   Create a new private repository using this project as a template. You can click **Use this template** on GitHub, or use the GitHub CLI:
-   ```bash
-   gh repo create my-em-workspace --template apenlor/opencode-em-os --private --clone
-   cd my-em-workspace
-   ```
-   *(If you prefer a local-only workspace, clone this repo, `rm -rf .git`, and run `git init` to start a fresh history).*
+4.  **Team Data**: Create your team folder and roster.
+    ```bash
+    mkdir -p data/teams/my-team/one-on-ones
+    cp data/teams/example/team.md data/teams/my-team/team.md
+    ```
 
-2. **Set up your environment**:
-   ```bash
-   # Authenticate with GitHub (if not already done)
-   gh auth login
-
-   # Configure Jira credentials
-   cp .env.example .env.local
-   # Edit .env.local with your Jira email, API token, and instance URL
-   ```
-
-3. **Initialize the Jira CLI** (one-time per machine):
-   ```bash
-   # set -a exports all variables from .env.local so the jira CLI process can read them
-   set -a; source .env.local; set +a
-   jira init
-   ```
-   When prompted, select `Cloud`, enter your Jira domain (e.g. `yourcompany.atlassian.net`), and follow the steps. The CLI stores its config at `~/.config/.jira/`. The same `JIRA_API_TOKEN` from `.env.local` is used by both the CLI and curl-based scripts.
-
-   > **Auth type**: For Jira Cloud, do **not** set `JIRA_AUTH_TYPE=bearer` — that is for on-premise PAT authentication only. Cloud uses Basic Auth (email + API token) by default.
-
-4. **Configure your Jira instance and projects** in `data/jira.md`:
-   ```markdown
-   ## Instance
-   Base URL: yourcompany.atlassian.net
-   Cloud ID: your-cloud-id
-
-   ## Projects
-   ### PROJ - My Project
-   Project Key: PROJ
-   ...
-   ```
-
-5. **Add your team data**:
-   ```bash
-   mkdir -p data/teams/myteam/one-on-ones
-   cp data/teams/example/team.md data/teams/myteam/team.md
-   # Edit with your team's details (Jira emails, GitHub handles, etc.)
-   ```
-
-6. **Start OpenCode** (optional but recommended):
-   ```bash
-   ./opencode-em.sh
-   ```
-   This wrapper script isolates OpenCode from your global configuration (`~/.config/opencode`), preventing global config models, skills, plugins, and MCP servers from bleeding into this project. Running this project isolated from global configs is highly recommended.
-
-   > On first run inside isolated mode, you'll need to configure your AI provider using the `/connect` command.
-
-7. On the first run, the EM agent will ask for your management style. Write 2–4 sentences covering your decision-making approach, preferred challenge level, communication tone, and focus areas. The more specific you are, the better the agent adapts. See `AGENTS.md` for examples and prompts.
+5.  **Start OpenCode**:
+    ```bash
+    ./opencode-em.sh
+    ```
+    *Note: If running in isolated mode, you will need to re-run `jira init` inside the session. See [GUIDE.md](./GUIDE.md#isolation-mode) for details.*
 
 ## Workspace Structure
 
-This workspace enforces strict organization to prevent context bleed between different initiatives.
-
 ```text
 opencode-em-os/
-├── .env.example                    # Template: copy to .env.local (never commit .env.local)
-├── data/                           # Shared data across initiatives
-│   ├── jira.md                     # Jira instance config + all project definitions
-│   ├── teams/                      # One folder per team
-│   │   └── {team-slug}/
-│   │       ├── team.md             # Roster, roles, GitHub handles, Jira emails
-│   │       └── one-on-ones/        # Per-person 1:1 history logs
-│   │           └── {nickname}.md
-│   ├── products/                   # One file per logical product or platform
-│   │   └── {product-slug}.md       # Repos, stack, architecture, glossary, learnings
-│   ├── strategies/                 # Persisted strategy documents
-│   │   └── {slug}.md
-│   └── visions/                    # Persisted vision documents
-│       └── {slug}.md
-├── initiatives/                    # One folder per initiative
-│   └── [initiative-name]/
-│       ├── data/                   # Initiative-specific data (PRDs, notes)
-│       ├── tmp/                    # Scratchpad files
-│       ├── scripts/                # Ad-hoc scripts for this initiative
-│       └── output/                 # Generated epics, strategies, and reports
-└── .opencode/                      # The agent's brain (skills, commands, personas)
+├── data/                           # Shared memory (Teams, Products, Strategies)
+│   ├── teams/                      # Roster + 1:1 history
+│   │   └── {team}/
+│   │       ├── team.md
+│   │       └── one-on-ones/
+│   ├── products/                   # Tech context + Architecture
+│   ├── strategies/                 # Strategy documents
+│   └── visions/                    # Vision documents
+├── initiatives/                    # Active efforts (one folder per project)
+│   └── [slug]/
+│       ├── data/                   # Input (PRDs, specs, notes)
+│       ├── output/                 # Generated artifacts (plans, epics, stories)
+│       ├── scripts/                # Ad-hoc scripts
+│       └── tmp/                    # Scratchpad
+├── .opencode/                      # Skills, commands, and EM persona
+└── .env.local                      # Local secrets (git-ignored)
 ```
 
-### Data Access Map
-
-| What | Where | Why |
-|---|---|---|
-| Jira token, Jira email | `.env.local` | Secrets: never committed. Used by curl-based scripts and the Jira CLI. |
-| Jira CLI server config | `~/.config/.jira/` (via `jira init`) | CLI auth and server URL; separate from workspace files. |
-| GitHub authentication | `gh auth login` | Stored in OS keyring by the GitHub CLI. |
-| Jira instance URL, Cloud ID | `data/jira.md` | Non-secret, instance-level configuration. |
-| Jira project key, defaults, issue types | `data/jira.md` | Project-specific routing and rules. |
-| Team member names, GitHub handles | `data/teams/{team-slug}/team.md` | Team context for skills and commands. |
-| 1:1 history per team member | `data/teams/{team-slug}/one-on-ones/{nickname}.md` | Structured memory for prep and logging. |
-| Product context (repos, stack, glossary) | `data/products/{product-slug}.md` | Architecture and domain context for authoring skills. |
-| Strategies (org or team level) | `data/strategies/{slug}.md` | Persisted strategy documents. |
-| Visions (org or team level) | `data/visions/{slug}.md` | Persisted vision documents. |
-
-### Data Access Rules
-
-The `@manager` agent operates on a **strict explicit context** rule. To keep your data private and context clean, it will not crawl your hard drive or the web. It will only use:
-1. `data/jira.md` for Jira instance and project configuration.
-2. Team context files under `data/teams/{team-slug}/team.md`.
-3. 1:1 history files under `data/teams/{team-slug}/one-on-ones/` when running 1:1 skills.
-4. Product context files under `data/products/{product-slug}.md` when authoring initiative artefacts.
-5. Files you explicitly point it to in your prompt (e.g., "Review initiatives/backend-rewrite/data/specs.md").
-6. Context provided via loaded skills.
-
-Jira credentials in `.env.local` are consumed only by scripts. GitHub authentication uses the native `gh auth login` session stored in your OS keyring. The agent never reads secrets directly.
-
-## Typical Workflows
-
-Here is how you use this OS to drive execution and manage your team.
-
-### 1. Initiative Planning
-Drive a new project from idea to execution.
-1. **Brainstorm & Plan**: Engage the `plan-initiative` skill to structure your work. The skill will facilitate your thinking, propose a slug for the initiative, and automatically create the folder structure under `initiatives/[slug]/` when the plan is confirmed:
-   > "Help me plan the backend rewrite initiative."
-2. **Provide Raw Context** (optional): Drop PRDs or raw notes into `initiatives/[slug]/data/` for the agent to reference.
-3. **Draft Execution Items**: Once the plan is solid, generate strategies, visions, epics, or stories. Authoring skills save output to `initiatives/[slug]/output/` automatically.
-4. **Push to Jira**: Leverage the built-in CLI integration via the `jira` skill:
-   > "Create these epics in the 'PROJ' Jira project."
-
-### 2. The 1:1 Lifecycle
-Maintain a continuous feedback loop with direct reports using structured memory.
-1. **Prepare**: Invoke `prepare-one-on-one` for a team member (e.g., Bob). The system reads `data/teams/{team-slug}/team.md` and `data/teams/{team-slug}/one-on-ones/bob.md` to surface pending items and signal trends.
-2. **Review**: The agent presents a structured prep sheet with opening lines, situational analysis, and key questions.
-3. **Log**: After the session, use `log-one-on-one` to commit the highlights, new commitments, and signals back to `data/teams/{team-slug}/one-on-ones/bob.md`.
-
-### 3. User Story Mapping
-Translate high-level product requirements into functional slices.
-1. **Ingest**: Place a PRD or raw feature requirements in your initiative's `data/` folder.
-2. **Map**: Use the `us-mapping` skill and point it to the PRD. The system generates a structured map (Backbone -> Activities -> Stories) in your `output/` folder.
-3. **Refine**: Ask the agent to break down specific complex activities into smaller, INVEST-compliant user stories using the `write-us` skill.
-4. **Export**: Use the `jira` skill to transform the finalized story map into a prioritized Jira backlog.
-
-### 4. Initiative Cleanup
-Keep your workspace organized as artifacts accumulate.
-1. **Tidy**: Invoke the `tidy-initiative` skill to review and classify output files.
-   > "Tidy the backend-rewrite initiative"
-2. **Promote**: Move finalized documents to the initiative's `data/` folder for future reference.
-3. **Extract**: Surface architecture decisions, domain terms, and learnings into `data/products/`.
-4. **Clean**: Remove superseded drafts. A manifest is saved as an audit trail.
-
 ## Available Tools
-
-The agent automatically loads these skills based on your request.
 
 ### Strategy & Planning
 | Skill | Trigger Examples |
@@ -193,42 +77,27 @@ The agent automatically loads these skills based on your request.
 | `us-mapping` | "user story map", "story mapping" |
 | `write-epic-build` | "write an epic", "implementation plan" |
 | `write-epic-technical-discovery` | "technical discovery", "discovery epic" |
-| `decompose-epic` | "decompose this epic", "break down epic", "stories from epic" |
+| `decompose-epic` | "decompose this epic", "break down epic" |
 | `write-us` | "write a user story", "write a US" |
-
-> These skills produce local artifacts in `initiatives/[name]/output/`. They offer to push content to Jira as a follow-up step.
-
-### Integrations
-| Skill / Command | Trigger Examples |
-|-------|-----------------|
-| `jira` | "create an epic in Jira", "show me bugs", "issues completed" |
-| `/ic-activity` (Command) | "/ic-activity John last month" |
-
-> These tools interact with external systems (Jira, GitHub). They create or query data outside this workspace.
 
 ### People & Leadership
 | Skill / Command | Trigger Examples |
 |-------|-----------------|
 | `prepare-one-on-one` | "prepare my 1:1 with", "1:1 prep" |
-| `log-one-on-one` | "log my 1:1 with", "record 1:1", "save 1:1 notes" |
-| `mentor-me` | "mentor me with", "help me think", "I need advice" |
+| `log-one-on-one` | "log my 1:1 with", "record 1:1" |
+| `mentor-me` | "mentor me with", "help me think" |
+| `/ic-activity` | "/ic-activity John last month" |
+
+### Integrations
+| Skill | Trigger Examples |
+|-------|-----------------|
+| `jira` | "create in Jira", "show me bugs", "issues completed" |
 
 ## Isolation & Security
 
-This workspace is designed to run independently of any global OpenCode configuration.
+This workspace is designed to run in **Isolated Mode** via `./opencode-em.sh`. This prevents global OpenCode configurations from bleeding into your management workspace, ensuring your data and persona remain private and consistent.
 
-**How it works:**
-- `opencode-em.sh` overrides `XDG_CONFIG_HOME` to a local `.opencode-global/` directory, creating a clean global config namespace per project.
-- On first run, the script bootstraps a minimal empty config so OpenCode starts clean.
-- The project-level `opencode.json` controls all agent, permission, and sharing settings.
-- `.opencode-global/` is git-ignored so each user gets their own isolated environment.
-
-**What this prevents:**
-- Global models, plugins, and MCP servers from affecting this project.
-- Global `AGENTS.md` rules from leaking in.
-- Provider credentials from being shared — each user runs `/connect` once inside the isolated session.
-
-> If you prefer running `opencode` directly without isolation, it will still work — but global settings will merge with the project config per OpenCode's [precedence rules](https://opencode.ai/docs/config/#precedence-order).
+See [GUIDE.md](./GUIDE.md) for detailed Data Access Rules and security considerations.
 
 ## License
 
