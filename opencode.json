@@ -25,7 +25,7 @@
     "bash": {
       "*": "ask",
       "mkdir -p initiatives/*": "allow",
-      "jira *": "allow",
+      "jira *": "ask",
       "gh *": "allow",
       "git log*": "allow",
       "git status*": "allow",
