@@ -12,6 +12,8 @@
 - Restructured `data/` from flat files to entity-based folders
 - Initiative plan now saved to `initiatives/[slug]/data/initiative-plan.md` (was `output/`) to reflect its role as input context for subsequent skills
 - Updated `log-one-on-one`, `prepare-one-on-one`, and `/ic-activity` to use new team paths (`data/teams/{team}/...`)
+- Scoped `edit` permission to auto-allow writes inside `initiatives/*`; all other paths remain `ask`
+- Added `mkdir -p initiatives/*` to allowed bash commands so initiative folder creation requires no approval
 - Updated `AGENTS.md`, `manager.md` agent, and `README.md` to reflect new data layout
 
 ### Removed
