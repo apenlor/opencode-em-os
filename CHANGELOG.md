@@ -9,6 +9,8 @@
 - Product template (`data/products/example.md`)
 
 ### Changed
+- `opencode-em.sh` now automatically sources `.env.local` on startup, so Jira credentials are inherited by all child processes without manual exporting
+- Removed `## Prerequisites` section from jira skill — setup documentation consolidated in `GUIDE.md`
 - Restructured `data/` from flat files to entity-based folders
 - Initiative plan now saved to `initiatives/[slug]/data/initiative-plan.md` (was `output/`) to reflect its role as input context for subsequent skills
 - Updated `log-one-on-one`, `prepare-one-on-one`, and `/ic-activity` to use new team paths (`data/teams/{team}/...`)

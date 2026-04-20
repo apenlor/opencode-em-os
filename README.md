@@ -21,11 +21,11 @@ For deep dives into concepts like strategy kernels, vision frameworks, and the O
 
 2.  **Environment**: Copy `.env.example` to `.env.local` and add your Jira credentials. Authenticate with `gh auth login`.
 
-3.  **Jira CLI**: Initialize the Jira CLI (one-time step).
+3.  **Jira CLI**: Install and initialize the Jira CLI (one-time step).
     ```bash
-    set -a; source .env.local; set +a
-    jira init
+    brew install ankitpokhrel/jira-cli/jira-cli
     ```
+    Then run `jira init` once inside the session after starting OpenCode (see step 5).
 
 4.  **Team Data**: Create your team folder and roster.
     ```bash
@@ -37,7 +37,13 @@ For deep dives into concepts like strategy kernels, vision frameworks, and the O
     ```bash
     ./opencode-em.sh
     ```
-    *Note: If running in isolated mode, you will need to re-run `jira init` inside the session. See [GUIDE.md](./GUIDE.md#isolation-mode) for details.*
+    The runner loads `.env.local` automatically. On first use, run `/connect` to set up your AI provider, then `jira init` once to initialize the Jira CLI in isolated mode.
+
+    > **Without the wrapper**: If you run `opencode` directly, export credentials manually before any Jira operation:
+    > ```bash
+    > set -a; source .env.local; set +a
+    > opencode
+    > ```
 
 ## Workspace Structure
 

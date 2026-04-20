@@ -73,14 +73,20 @@ The `opencode-em.sh` wrapper script is the recommended way to run this OS. It is
 - It sets `XDG_CONFIG_HOME` to a local `.opencode-global/` directory.
 - This prevents your global skills, plugins, or MCP servers from interfering with the EM-OS.
 - **Provider Setup**: On your first run in isolated mode, you must run `/connect` to set up your AI provider (Anthropic, OpenAI, etc.).
+- **Automatic Credential Loading**: The runner sources `.env.local` before launching OpenCode, so `JIRA_API_TOKEN`, `JIRA_EMAIL`, and `JIRA_URL` are available to all child processes (jira CLI, curl, scripts) without manual exporting.
+
+**Jira CLI Setup:**
+Install the CLI once:
+```bash
+brew install ankitpokhrel/jira-cli/jira-cli
+```
 
 **Jira CLI Caveat:**
 The Jira CLI also respects `XDG_CONFIG_HOME`. When running in isolated mode, it will look for config at `.opencode-global/.jira/` instead of your default `~/.config/.jira/`.
 If you have already initialized the Jira CLI globally, you will need to re-run `jira init` once inside the isolated environment:
 ```bash
 ./opencode-em.sh
-# Inside the session:
-set -a; source .env.local; set +a
+# Inside the session (credentials are already loaded):
 jira init
 ```
 
