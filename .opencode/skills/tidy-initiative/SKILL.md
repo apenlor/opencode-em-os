@@ -44,7 +44,7 @@ Read every file in `initiatives/[slug]/output/`. For each file, determine:
 **Status** — one of:
 - `final` — latest version, no newer revision exists
 - `superseded` — an older version alongside a newer one (detect via version suffixes like `_v1`, `_v2`, dates in filenames, or content comparison)
-- `synced` — content has been pushed to Jira (look for Jira issue keys referenced in the file)
+- `synced` — content has been pushed to Jira. A file is `synced` if it has a `jira_key` field in its YAML frontmatter **or** contains a Jira issue key pattern (e.g. `PROJ-123`) anywhere in its content.
 - `intermediate` — partial work, notes, or drafts that aren't complete artifacts
 
 **Recommendation** — one of:
@@ -56,10 +56,17 @@ Read every file in `initiatives/[slug]/output/`. For each file, determine:
 - `keep` — leave in place (still actively needed or recently created)
 - `delete` — remove (superseded, fully synced to Jira, or clearly stale)
 
+Chained (two-step) recommendations are also valid:
+- `update-product → delete` — extract knowledge first, then delete the source file
+- `update-product → promote` — extract knowledge, then promote as reference material
+- `summarize → delete` — consolidate into another file first, then delete the originals
+
 **Classification rules:**
 - When in doubt between `keep` and `promote`, prefer `promote`
 - When in doubt between `promote` and `delete`, prefer `promote`
-- `delete` only for files that are unambiguously superseded or already synced
+- **NEVER recommend plain `delete` for a file with substantive content** (more than a title and Jira link). If the file is `synced` or `superseded` but contains rich descriptions, acceptance criteria, architecture context, domain knowledge, or learnings, the content has value beyond the Jira issue — recommend `update-product → delete` or `promote` instead.
+- Before recommending `delete` for any file, explicitly ask: "Does this file contain architecture decisions, domain terms, patterns, constraints, or learnings that are not already captured in `data/products/`?" If yes, use `update-product → delete` or `update-product → promote`.
+- `delete` as a sole recommendation is only appropriate for files that are unambiguously superseded by a newer version of the same artifact AND contain no extractable knowledge beyond what the newer version already has.
 - `manifest` files are always `keep` — do not reclassify them
 
 ### Present the manifest
@@ -119,10 +126,14 @@ For files marked `promote`:
 
 ### 3d. Delete
 
-For files marked `delete`:
+For files marked `delete` (or the second step of a chained recommendation like `update-product → delete`):
+
+> **Dependency:** For any chained recommendation (e.g. `update-product → delete`), the first action (3b update or 3a summarize) **must be completed and confirmed** before proceeding to deletion. Never delete the source file before the extraction is done.
+
 1. List all files to be deleted with a one-line reason for each.
-2. Ask for explicit confirmation.
-3. Delete only after confirmation.
+2. For chained recommendations, confirm that the preceding step (extraction or consolidation) completed successfully before including the file in this list.
+3. Ask for explicit confirmation.
+4. Delete only after confirmation.
 
 **Never delete without explicit confirmation. Default to promoting over deleting when uncertain.**
 
@@ -144,7 +155,7 @@ After all actions are complete, write `initiatives/[slug]/output/MANIFEST.md`:
 
 | File | Type | Final Location | Action Taken |
 |------|------|---------------|--------------|
-| [filename] | [type] | [current path or "deleted"] | promoted / kept / deleted / consolidated into [file] |
+| [filename] | [type] | [current path or "deleted"] | promoted / kept / deleted / consolidated into [file] / extracted to [data file] then deleted |
 
 ## Shared Data Updates
 

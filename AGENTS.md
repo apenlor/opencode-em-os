@@ -1,6 +1,6 @@
 # opencode-em-os — Workspace Rules
 
-This workspace is an Engineering Manager operating system. These rules define how data is accessed, how work is organized, and the EM's personal style.
+This workspace is an Engineering Manager operating system. These rules define how the agent behaves, how data is accessed, and how work is organized. They apply to all agents and sessions.
 
 ## Engineering Manager Style
 
@@ -21,7 +21,7 @@ The EM's style is: **EMPTY**.
 
 ```
 opencode-em-os/
-├── data/                           # Shared data across initiatives
+├── data/                           # Shared institutional memory (persists across initiatives)
 │   ├── jira.md                     # Jira instance config + all project definitions
 │   ├── teams/                      # One folder per team
 │   │   └── {team-slug}/
@@ -34,25 +34,37 @@ opencode-em-os/
 │   │   └── {slug}.md
 │   └── visions/                    # Persisted vision documents
 │       └── {slug}.md
-└── initiatives/                    # One folder per initiative
+└── initiatives/                    # One folder per initiative (ephemeral project workspaces)
     └── [initiative-name]/
-        ├── data/                   # Initiative-specific data
-        ├── tmp/                    # Initiative-specific temporary files
-        ├── scripts/                # Analysis and processing scripts
-        └── output/                 # Reports and analysis results
+        ├── data/                   # Input context (PRDs, specs, notes) + promoted reference material
+        ├── tmp/                    # Scratchpad — can be deleted without loss
+        ├── scripts/                # Disposable automation for this initiative
+        └── output/                 # Generated artifacts (epics, stories, reports, MANIFEST.md)
 ```
 
 ## Data Access Rules
 
 - **Team Context**: Team data lives in `data/teams/{team-slug}/team.md`. ALWAYS read the relevant team file when a team member is mentioned or their context is needed.
 - **Product Context**: Product data lives in `data/products/{product-slug}.md`. Read when working on an initiative related to a known product — architecture, domain terms, and learnings provide valuable context.
-- **Data Gathering**: ONLY use data files the user explicitly references or the known team/product context files. NEVER look for external data on your own. If data is missing, ask the user to provide it.
+- **Data Gathering**: For ad-hoc questions and general conversation, only use data files the user explicitly references or the known team/product context files. Skills with defined file access patterns (e.g., reading `output/` folders, locating epic files) follow their own access rules. NEVER search for or access external data sources on your own. If data is missing, ask the user to provide it.
+
+## Active Initiative
+
+If the user has specified or is clearly working within an initiative during the current conversation, remember it as the active context. Do not ask "which initiative?" again unless the request is ambiguous or could span multiple initiatives.
 
 ## Initiative Boundaries
 
 - All initiative work lives under `initiatives/[initiative-name]/`.
 - Keep initiative-specific generated files contained within their respective directory.
 - Save reports and analyses to `initiatives/[initiative-name]/output/`.
+
+## Sync Invariant
+
+When any artifact is created in Jira, its source `.md` file **MUST** be updated with YAML frontmatter (`jira_key`, `jira_url`, `jira_synced_at`). This is handled by the `jira` skill's Step 6 — callers must always pass the source file path when invoking it. Never leave a Jira issue without a local reference.
+
+## Knowledge Preservation
+
+Local files are the system's institutional memory. Content synced to Jira is **NOT** considered "backed up" — Jira is a delivery tool, not a knowledge base. Before deleting any file with substantive content, evaluate whether architecture decisions, domain knowledge, or learnings should be extracted to `data/products/`. Default to preserving over deleting.
 
 ## Tooling Conventions
 
@@ -74,3 +86,5 @@ Always prefer CLI and local scripts over MCP tools. This saves tokens and keeps 
 
 - All generated output must be in **English**.
 - Maintain the Engineering Manager's style as defined above.
+- **File naming**: use `kebab-case`. Prefix output files by type: `epic-build-`, `epic-discovery-`, `us-`, `decomposition-`, `strategy-`, `vision-`.
+- **output/ vs data/ vs tmp/**: `output/` holds generated artifacts (epics, stories, decompositions, reports, manifests). `data/` holds input context (PRDs, specs, meeting notes) and promoted reference material. `tmp/` holds scratchpad content that can be deleted without loss.

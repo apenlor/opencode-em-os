@@ -7,6 +7,11 @@
 - Optional product-context awareness for authoring skills (`write-epic-build`, `write-epic-technical-discovery`, `decompose-epic`, `write-us`, `us-mapping`, `plan-initiative`)
 - Entity-based data model: `data/teams/`, `data/products/`, `data/strategies/`, `data/visions/`
 - Product template (`data/products/example.md`)
+- Jira write-back: after creating any issue, the `jira` skill updates the source `.md` file's YAML frontmatter with `jira_key`, `jira_url`, and `jira_synced_at` — enabling reliable sync tracking across skills and tidy runs
+- `write-us` and `write-epic-build` skills now pass the saved file path to the `jira` skill so write-back fires automatically
+- `decompose-epic` skill: Story Candidates table now includes a `Jira` column populated with issue keys and links during bulk placeholder creation
+- `tidy-initiative` skill: chained recommendations (`update-product → delete`, `update-product → promote`, `summarize → delete`) for safe extract-then-clean workflows
+- `tidy-initiative` skill: improved `synced` detection via `jira_key` frontmatter field (set by Jira write-back) in addition to in-content issue key patterns
 
 ### Changed
 - `opencode-em.sh` now automatically sources `.env.local` on startup, so Jira credentials are inherited by all child processes without manual exporting
@@ -18,6 +23,7 @@
 - Added `mkdir -p initiatives/*` to allowed bash commands so initiative folder creation requires no approval
 - Changed `jira *` bash permission from `allow` to `ask` — Jira operations create external resources and warrant a confirmation gate
 - Updated `AGENTS.md`, `manager.md` agent, and `README.md` to reflect new data layout
+- `tidy-initiative` skill: strengthened classification rules — plain `delete` is now explicitly prohibited for files with substantive content; synced or superseded files with architecture, domain, or learning content must use `update-product → delete` or `promote` instead
 
 ### Removed
 - Legacy flat data files: `data/team_example.md`, `data/one-on-ones/`

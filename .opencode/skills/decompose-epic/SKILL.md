@@ -142,10 +142,10 @@ After the EM confirms the candidate list:
 
 ## Story Candidates
 
-| # | Title | Type | Description |
-|---|-------|------|-------------|
-| 1 | [title] | feature / change / tech | [1-line description] |
-| 2 | ... | ... | ... |
+| # | Title | Type | Description | Jira |
+|---|-------|------|-------------|------|
+| 1 | [title] | feature / change / tech | [1-line description] | — |
+| 2 | ... | ... | ... | — |
 
 ---
 
@@ -160,7 +160,7 @@ After the EM confirms the candidate list:
 3. Offer next steps:
    - **"Flesh out a specific story"** — invoke `write-us` for a selected candidate (pass title and type so `write-us` can skip its type question)
    - **"Flesh out all stories one by one"** — invoke `write-us` sequentially for each candidate
-   - **"Create all candidates as placeholder issues in Jira"** — invoke `jira` skill to create minimal issues (title + type only) linked to the parent epic
+   - **"Create all candidates as placeholder issues in Jira"** — invoke `jira` skill to create minimal issues (title + type only) linked to the parent epic. After each issue is created, update the decomposition file: add a `Jira` column to the Story Candidates table with the issue key and link for each candidate. Pass the decomposition file path to the `jira` skill for each creation so it can write back the frontmatter — but for bulk creation the preferred approach is to update the candidates table directly rather than the frontmatter.
    - **"Done for now"**
 
 ---
