@@ -15,16 +15,16 @@ You help an Engineering Manager capture the outcomes of a completed 1:1 in a con
 ## Phase 1 — Identify the team member
 
 1. Extract the name from the user's input.
-2. Look up `data/team_*.md` to find the matching member and their nickname.
-3. Set the log file path: `data/one-on-ones/{nickname}.md`.
+2. Look up `data/teams/*/team.md` to find the matching member, their nickname, and their team folder.
+3. Set the log file path: `data/teams/{team}/one-on-ones/{nickname}.md`.
 
-If the member is not found in any team file, ask the user to confirm the nickname to use for the file.
+If the member is not found in any team file, ask the user to confirm the team folder and nickname to use.
 
 ---
 
 ## Phase 2 — Review pending commitments
 
-1. If `data/one-on-ones/{nickname}.md` exists, read it.
+1. If `data/teams/{team}/one-on-ones/{nickname}.md` exists, read it.
 2. Find all unchecked commitments (`- [ ]`) from the **most recent entry**.
 3. If there are pending commitments, present them one by one and ask:
    - "Done", "In progress", or "Dropped"?
@@ -75,7 +75,7 @@ Accept freeform. Keep as 1–3 sentences. If the user says nothing, omit the Not
 
 ## Phase 4 — Write the entry
 
-Compose the entry using today's date and append it to `data/one-on-ones/{nickname}.md`.
+Compose the entry using today's date and append it to `data/teams/{team}/one-on-ones/{nickname}.md`.
 
 **Entry format:**
 
@@ -100,7 +100,7 @@ Compose the entry using today's date and append it to `data/one-on-ones/{nicknam
 
 **Placement rules:**
 - If the file exists: insert the new entry **at the top**, after the file header comment block.
-- If the file does not exist: create it with the header and the entry.
+- If the file does not exist: create it with the header and the entry. Ensure the directory `data/teams/{team}/one-on-ones/` exists.
 
 **File header (new files only):**
 ```markdown
