@@ -15,6 +15,7 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 *   **Epic and user story drafting**: build epics, discovery epics, INVEST-compliant stories.
 *   **IC activity analysis**: automated metrics from Jira and GitHub.
 *   **User story mapping**: from PRDs and Figma contexts to structured story maps.
+*   **Initiative cleanup**: inventory, promote, consolidate, and tidy output artifacts.
 *   **Leadership mentoring**: Engineering Director perspective to sharpen your thinking.
 
 ## Quick Start
@@ -69,7 +70,8 @@ Transforms OpenCode into a context-aware Engineering Manager assistant with:
 
 5. **Add your team data**:
    ```bash
-   cp data/team_example.md data/team_myteam.md
+   mkdir -p data/teams/myteam/one-on-ones
+   cp data/teams/example/team.md data/teams/myteam/team.md
    # Edit with your team's details (Jira emails, GitHub handles, etc.)
    ```
 
@@ -89,20 +91,27 @@ This workspace enforces strict organization to prevent context bleed between dif
 
 ```text
 opencode-em-os/
-├── .env.example                # Template: copy to .env.local (never commit .env.local)
-├── data/                       # Shared context (persists across all work)
-│   ├── jira.md                 # Jira instance config + all project definitions
-│   ├── team_{name}.md          # Team rosters, roles, GitHub handles, Jira emails
-│   └── one-on-ones/            # Per-person 1:1 history logs
-│
-├── initiatives/                # Active work (One folder per initiative)
+├── .env.example                    # Template: copy to .env.local (never commit .env.local)
+├── data/                           # Shared data across initiatives
+│   ├── jira.md                     # Jira instance config + all project definitions
+│   ├── teams/                      # One folder per team
+│   │   └── {team-slug}/
+│   │       ├── team.md             # Roster, roles, GitHub handles, Jira emails
+│   │       └── one-on-ones/        # Per-person 1:1 history logs
+│   │           └── {nickname}.md
+│   ├── products/                   # One file per logical product or platform
+│   │   └── {product-slug}.md       # Repos, stack, architecture, glossary, learnings
+│   ├── strategies/                 # Persisted strategy documents
+│   │   └── {slug}.md
+│   └── visions/                    # Persisted vision documents
+│       └── {slug}.md
+├── initiatives/                    # One folder per initiative
 │   └── [initiative-name]/
-│       ├── data/               # Context just for this initiative (PRDs, notes)
-│       ├── tmp/                # Scratchpad files
-│       ├── scripts/            # Ad-hoc scripts for this specific project
-│       └── output/             # Generated epics, strategies, and reports
-│
-└── .opencode/                  # The agent's brain (skills, commands, personas)
+│       ├── data/                   # Initiative-specific data (PRDs, notes)
+│       ├── tmp/                    # Scratchpad files
+│       ├── scripts/                # Ad-hoc scripts for this initiative
+│       └── output/                 # Generated epics, strategies, and reports
+└── .opencode/                      # The agent's brain (skills, commands, personas)
 ```
 
 ### Data Access Map
@@ -114,17 +123,21 @@ opencode-em-os/
 | GitHub authentication | `gh auth login` | Stored in OS keyring by the GitHub CLI. |
 | Jira instance URL, Cloud ID | `data/jira.md` | Non-secret, instance-level configuration. |
 | Jira project key, defaults, issue types | `data/jira.md` | Project-specific routing and rules. |
-| Team member names, GitHub handles | `data/team_*.md` | Team context for skills and commands. |
-| 1:1 history per team member | `data/one-on-ones/{id}.md` | Structured memory for prep and logging. |
+| Team member names, GitHub handles | `data/teams/{team-slug}/team.md` | Team context for skills and commands. |
+| 1:1 history per team member | `data/teams/{team-slug}/one-on-ones/{nickname}.md` | Structured memory for prep and logging. |
+| Product context (repos, stack, glossary) | `data/products/{product-slug}.md` | Architecture and domain context for authoring skills. |
+| Strategies (org or team level) | `data/strategies/{slug}.md` | Persisted strategy documents. |
+| Visions (org or team level) | `data/visions/{slug}.md` | Persisted vision documents. |
 
 ### Data Access Rules
 
 The `@manager` agent operates on a **strict explicit context** rule. To keep your data private and context clean, it will not crawl your hard drive or the web. It will only use:
 1. `data/jira.md` for Jira instance and project configuration.
-2. Team context files in the root `data/` folder (`data/team_*.md`).
-3. 1:1 history files in `data/one-on-ones/` when running 1:1 skills.
-4. Files you explicitly point it to in your prompt (e.g., "Review initiatives/backend-rewrite/data/specs.md").
-5. Context provided via loaded skills.
+2. Team context files under `data/teams/{team-slug}/team.md`.
+3. 1:1 history files under `data/teams/{team-slug}/one-on-ones/` when running 1:1 skills.
+4. Product context files under `data/products/{product-slug}.md` when authoring initiative artefacts.
+5. Files you explicitly point it to in your prompt (e.g., "Review initiatives/backend-rewrite/data/specs.md").
+6. Context provided via loaded skills.
 
 Jira credentials in `.env.local` are consumed only by scripts. GitHub authentication uses the native `gh auth login` session stored in your OS keyring. The agent never reads secrets directly.
 
@@ -143,9 +156,9 @@ Drive a new project from idea to execution.
 
 ### 2. The 1:1 Lifecycle
 Maintain a continuous feedback loop with direct reports using structured memory.
-1. **Prepare**: Invoke `prepare-one-on-one` for a team member (e.g., Bob). The system reads `data/team_*x*.md` and `data/one-on-ones/bob.md` to surface pending items and signal trends.
+1. **Prepare**: Invoke `prepare-one-on-one` for a team member (e.g., Bob). The system reads `data/teams/{team-slug}/team.md` and `data/teams/{team-slug}/one-on-ones/bob.md` to surface pending items and signal trends.
 2. **Review**: The agent presents a structured prep sheet with opening lines, situational analysis, and key questions.
-3. **Log**: After the session, use `log-one-on-one` to commit the highlights, new commitments, and signals back to `data/one-on-ones/bob.md`.
+3. **Log**: After the session, use `log-one-on-one` to commit the highlights, new commitments, and signals back to `data/teams/{team-slug}/one-on-ones/bob.md`.
 
 ### 3. User Story Mapping
 Translate high-level product requirements into functional slices.
@@ -153,6 +166,14 @@ Translate high-level product requirements into functional slices.
 2. **Map**: Use the `us-mapping` skill and point it to the PRD. The system generates a structured map (Backbone -> Activities -> Stories) in your `output/` folder.
 3. **Refine**: Ask the agent to break down specific complex activities into smaller, INVEST-compliant user stories using the `write-us` skill.
 4. **Export**: Use the `jira` skill to transform the finalized story map into a prioritized Jira backlog.
+
+### 4. Initiative Cleanup
+Keep your workspace organized as artifacts accumulate.
+1. **Tidy**: Invoke the `tidy-initiative` skill to review and classify output files.
+   > "Tidy the backend-rewrite initiative"
+2. **Promote**: Move finalized documents to the initiative's `data/` folder for future reference.
+3. **Extract**: Surface architecture decisions, domain terms, and learnings into `data/products/`.
+4. **Clean**: Remove superseded drafts. A manifest is saved as an audit trail.
 
 ## Available Tools
 
@@ -164,6 +185,7 @@ The agent automatically loads these skills based on your request.
 | `plan-initiative` | "plan an initiative", "help me structure this" |
 | `write-strategy` | "write a strategy" |
 | `write-vision` | "write a vision" |
+| `tidy-initiative` | "tidy initiative", "clean up output", "organize initiative" |
 
 ### Product & Delivery Authoring
 | Skill | Trigger Examples |
