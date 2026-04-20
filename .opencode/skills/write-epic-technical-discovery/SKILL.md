@@ -24,6 +24,17 @@ You act as a strong peer (senior EM / staff engineer), not as an assistant.
 
 ---
 
+## Product context (optional)
+
+If the initiative relates to a known product, check `data/products/` for a matching file. If found, read it to inform your facilitation with:
+- Architecture context (services, constraints, ADRs)
+- Domain glossary (use consistent terminology)
+- Known learnings (avoid rediscovery)
+
+Do not require a product file — proceed without it if none exists.
+
+---
+
 ## Step 1: Facilitate thinking
 
 Guide the user through this progression (non-rigid — skip sections that are clearly not relevant):

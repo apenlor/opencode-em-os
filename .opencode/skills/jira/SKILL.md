@@ -28,22 +28,6 @@ following the existing template."*
 
 ---
 
-## Prerequisites
-
-The `jira` CLI ([ankitpokhrel/jira-cli](https://github.com/ankitpokhrel/jira-cli)) must be installed and initialized:
-
-```bash
-# Install (macOS)
-brew install ankitpokhrel/jira-cli/jira-cli
-
-# One-time setup — run this once per machine
-# set -a exports all variables from .env.local to child processes (including the jira CLI)
-set -a; source .env.local; set +a
-jira init
-```
-
-The `JIRA_API_TOKEN` env var is also used by `curl`-based queries and scripts (sourced from `.env.local`). It serves both consumers.
-
 ## Tool usage
 
 Use the right tool for each operation type:
@@ -52,12 +36,6 @@ Use the right tool for each operation type:
 |---|---|---|
 | **Creating issues** | `jira` CLI | Accepts plain markdown; converts to ADF automatically. No manual JSON payload. |
 | **Querying issues** | `curl` (REST API v3) | Lightweight. No ADF involved in responses. Faster for read-only operations. |
-
-Before any Jira operation, ensure credentials are exported to the shell. Run this once per terminal session:
-
-```bash
-set -a; source .env.local; set +a
-```
 
 Then use `curl` for queries:
 
@@ -152,9 +130,6 @@ Present the issue draft before creating. Ask the user to confirm or edit.
 **Always use the `jira` CLI for issue creation.** It accepts plain markdown descriptions and converts them to Atlassian Document Format (ADF) automatically — no manual JSON payload needed.
 
 ```bash
-# Export credentials once per session before using jira CLI or curl
-set -a; source .env.local; set +a
-
 # Basic creation
 jira issue create \
   -p {project_key} \

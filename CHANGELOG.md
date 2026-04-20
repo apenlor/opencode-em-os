@@ -1,5 +1,42 @@
 # Changelog
 
+## v1.1.0 (2026-04-20)
+
+### Added
+- `tidy-initiative` skill: safe, interactive initiative output cleanup with 4-phase workflow (inventory, act, report) and MANIFEST audit trail
+- Optional product-context awareness for authoring skills (`write-epic-build`, `write-epic-technical-discovery`, `decompose-epic`, `write-us`, `us-mapping`, `plan-initiative`)
+- Entity-based data model: `data/teams/`, `data/products/`, `data/strategies/`, `data/visions/`
+- Product template (`data/products/example.md`)
+
+### Changed
+- `opencode-em.sh` now automatically sources `.env.local` on startup, so Jira credentials are inherited by all child processes without manual exporting
+- Removed `## Prerequisites` section from jira skill — setup documentation consolidated in `GUIDE.md`
+- Restructured `data/` from flat files to entity-based folders
+- Initiative plan now saved to `initiatives/[slug]/data/initiative-plan.md` (was `output/`) to reflect its role as input context for subsequent skills
+- Updated `log-one-on-one`, `prepare-one-on-one`, and `/ic-activity` to use new team paths (`data/teams/{team}/...`)
+- Scoped `edit` permission to auto-allow writes inside `initiatives/*`; all other paths remain `ask`
+- Added `mkdir -p initiatives/*` to allowed bash commands so initiative folder creation requires no approval
+- Changed `jira *` bash permission from `allow` to `ask` — Jira operations create external resources and warrant a confirmation gate
+- Updated `AGENTS.md`, `manager.md` agent, and `README.md` to reflect new data layout
+
+### Removed
+- Legacy flat data files: `data/team_example.md`, `data/one-on-ones/`
+
+## v1.0.2 (2026-04-20)
+
+### Added
+- `decompose-epic` skill for facilitated epic breakdown into INVEST-compliant stories (#6)
+- Hybrid Jira CLI/REST API integration for issue creation (#5)
+
+## v1.0.1 (2026-04-17)
+
+### Changed
+- Migrated GitHub authentication to `gh auth login`, removed GH token from `.env.local` (#4)
+- Robust IC Activity script with Jira REST API migration (#3)
+
+### Fixed
+- License: include original author in copyright notice (#2)
+
 ## v1.0.0 (2026-04-14)
 
 ### Added

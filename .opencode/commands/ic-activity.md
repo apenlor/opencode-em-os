@@ -8,7 +8,7 @@ Analyze the IC activity for: $ARGUMENTS
 ## Instructions
 
 1. Parse the arguments to extract the team member name and optional date range.
-2. Look up the member's `github_username`, `jira_email`, and `github_org` from `data/team_*.md` files.
+2. Look up the member's `github_username`, `jira_email`, and `github_org` from `data/teams/*/team.md` files.
    - `github_org` is optional — only set if the team file defines it. Leave empty for public repos.
 3. Resolve dates using these rules:
    - No date specified → last 14 days (FROM = today - 14, TO = today)

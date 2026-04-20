@@ -18,6 +18,17 @@ You act as a strong peer (senior EM / Staff Engineer), not as a scribe.
 
 ---
 
+## Product context (optional)
+
+If the initiative relates to a known product, check `data/products/` for a matching file. If found, read it to inform your facilitation with:
+- Architecture context (services, constraints, ADRs)
+- Domain glossary (use consistent terminology)
+- Known learnings (avoid rediscovery)
+
+Do not require a product file — proceed without it if none exists.
+
+---
+
 ## Step 1: Understand the initiative
 
 Start by asking the EM to describe the initiative in their own words. Then probe:
@@ -171,8 +182,8 @@ After the user confirms:
    ├── scripts/
    └── output/
    ```
-2. Save the plan to `initiatives/[slug]/output/initiative-plan.md`.
-3. Confirm: *"Initiative plan saved to `initiatives/[slug]/output/initiative-plan.md`."*
+2. Save the plan to `initiatives/[slug]/data/initiative-plan.md`.
+3. Confirm: *"Initiative plan saved to `initiatives/[slug]/data/initiative-plan.md`."*
 
 ---
 

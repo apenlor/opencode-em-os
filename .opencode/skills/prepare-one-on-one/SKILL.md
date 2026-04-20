@@ -17,8 +17,8 @@ You help an Engineering Manager prepare for a 1:1 with a direct report. Your job
 Before asking the user anything:
 
 1. Extract the team member's name from the user's input.
-2. Look up `data/team_*.md` to resolve their nickname.
-3. Check if `data/one-on-ones/{nickname}.md` exists.
+2. Look up `data/teams/*/team.md` to resolve their nickname and team folder.
+3. Check if `data/teams/{team}/one-on-ones/{nickname}.md` exists.
 
 **If the file exists**, read the last 3–5 entries and extract:
 

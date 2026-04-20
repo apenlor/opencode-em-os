@@ -18,10 +18,14 @@
   "permission": {
     "*": "ask",
     "read": "allow",
-    "edit": "ask",
+    "edit": {
+      "*": "ask",
+      "initiatives/*": "allow"
+    },
     "bash": {
       "*": "ask",
-      "jira *": "allow",
+      "mkdir -p initiatives/*": "allow",
+      "jira *": "ask",
       "gh *": "allow",
       "git log*": "allow",
       "git status*": "allow",

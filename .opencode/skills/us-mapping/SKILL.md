@@ -33,6 +33,17 @@ If both are available, use both: the PRD defines goals and constraints, Figma re
 
 ---
 
+## Product context (optional)
+
+If the initiative relates to a known product, check `data/products/` for a matching file. If found, read it to inform your facilitation with:
+- Architecture context (services, constraints, ADRs)
+- Domain glossary (use consistent terminology)
+- Known learnings (avoid rediscovery)
+
+Do not require a product file — proceed without it if none exists.
+
+---
+
 ## Step 2 — Clarifying Interview
 
 Before generating the map, ask the user only what you cannot infer from the inputs. Group all questions in a single message — do not ask one by one.

@@ -21,22 +21,32 @@ The EM's style is: **EMPTY**.
 
 ```
 opencode-em-os/
-├── data/                       # Shared data across initiatives
-│   ├── jira.md                 # Jira instance config + all project definitions
-│   ├── team_{name}.md          # Team context files
-│   └── one-on-ones/            # Per-person 1:1 history logs
-└── initiatives/                # One folder per initiative
+├── data/                           # Shared data across initiatives
+│   ├── jira.md                     # Jira instance config + all project definitions
+│   ├── teams/                      # One folder per team
+│   │   └── {team-slug}/
+│   │       ├── team.md             # Roster, roles, GitHub handles, Jira emails
+│   │       └── one-on-ones/        # Per-person 1:1 history logs
+│   │           └── {nickname}.md
+│   ├── products/                   # One file per logical product or platform
+│   │   └── {product-slug}.md       # Repos, stack, architecture, glossary, learnings
+│   ├── strategies/                 # Persisted strategy documents
+│   │   └── {slug}.md
+│   └── visions/                    # Persisted vision documents
+│       └── {slug}.md
+└── initiatives/                    # One folder per initiative
     └── [initiative-name]/
-        ├── data/               # Initiative-specific data
-        ├── tmp/                # Initiative-specific temporary files
-        ├── scripts/            # Analysis and processing scripts
-        └── output/             # Reports and analysis results
+        ├── data/                   # Initiative-specific data
+        ├── tmp/                    # Initiative-specific temporary files
+        ├── scripts/                # Analysis and processing scripts
+        └── output/                 # Reports and analysis results
 ```
 
 ## Data Access Rules
 
-- **Team Context**: Team data lives in `data/team_{name}.md`. ALWAYS read the relevant team file when a team member is mentioned or their context is needed.
-- **Data Gathering**: ONLY use data files the user explicitly references or the known team context files. NEVER look for external data on your own. If data is missing, ask the user to provide it.
+- **Team Context**: Team data lives in `data/teams/{team-slug}/team.md`. ALWAYS read the relevant team file when a team member is mentioned or their context is needed.
+- **Product Context**: Product data lives in `data/products/{product-slug}.md`. Read when working on an initiative related to a known product — architecture, domain terms, and learnings provide valuable context.
+- **Data Gathering**: ONLY use data files the user explicitly references or the known team/product context files. NEVER look for external data on your own. If data is missing, ask the user to provide it.
 
 ## Initiative Boundaries
 
