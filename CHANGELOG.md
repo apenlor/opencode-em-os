@@ -10,6 +10,7 @@
 
 ### Changed
 - Restructured `data/` from flat files to entity-based folders
+- Initiative plan now saved to `initiatives/[slug]/data/initiative-plan.md` (was `output/`) to reflect its role as input context for subsequent skills
 - Updated `log-one-on-one`, `prepare-one-on-one`, and `/ic-activity` to use new team paths (`data/teams/{team}/...`)
 - Updated `AGENTS.md`, `manager.md` agent, and `README.md` to reflect new data layout
 

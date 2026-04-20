@@ -90,7 +90,7 @@ jira init
 
 ### 1. Initiative Planning
 **Trigger**: "Help me plan the 'Cloud Migration' initiative."
-**Outcome**: A structured plan saved to `initiatives/cloud-migration/output/initiative-plan.md` and an auto-created folder structure.
+**Outcome**: A structured plan saved to `initiatives/cloud-migration/data/initiative-plan.md` and an auto-created folder structure.
 **Tip**: Be as vague or as specific as you want. The agent will ask clarifying questions to help you scope the work.
 
 ### 2. The 1:1 Lifecycle
@@ -132,6 +132,19 @@ opencode-em-os/
 │       └── tmp/                    # Scratchpad
 └── .opencode/                      # The OS logic (Skills, Commands)
 ```
+
+### Initiative Folder Conventions
+
+Each initiative folder has four subfolders with distinct roles:
+
+| Folder | Purpose | Lifecycle |
+|--------|---------|-----------|
+| `data/` | Input context brought in or generated for reference: PRDs, specs, notes, and the confirmed initiative plan. Things you work *from*. | Persists for the initiative's lifetime |
+| `output/` | Generated deliverables: epics, stories, strategies, reports. Things you produce *for export* — to Jira, stakeholders, or promotion to shared `data/`. | Exported or promoted during tidy |
+| `scripts/` | Ad-hoc automation written for this initiative (data pulls, transforms, analysis). | Disposable |
+| `tmp/` | Scratchpad, drafts, and intermediate files. | Disposable — cleaned during `tidy-initiative` |
+
+The rule of thumb: if another skill needs to *read* it, it belongs in `data/`. If it's a finished artefact going *out*, it belongs in `output/`.
 
 ### Data Access Rules
 1. **Team Context**: Read from `data/teams/*/team.md` for roster details.

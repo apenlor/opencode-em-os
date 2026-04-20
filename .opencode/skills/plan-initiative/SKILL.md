@@ -182,8 +182,8 @@ After the user confirms:
    ├── scripts/
    └── output/
    ```
-2. Save the plan to `initiatives/[slug]/output/initiative-plan.md`.
-3. Confirm: *"Initiative plan saved to `initiatives/[slug]/output/initiative-plan.md`."*
+2. Save the plan to `initiatives/[slug]/data/initiative-plan.md`.
+3. Confirm: *"Initiative plan saved to `initiatives/[slug]/data/initiative-plan.md`."*
 
 ---
 
